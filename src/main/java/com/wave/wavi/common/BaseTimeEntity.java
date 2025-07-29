@@ -1,4 +1,4 @@
-package com.wave.wavi.model;
+package com.wave.wavi.common;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
