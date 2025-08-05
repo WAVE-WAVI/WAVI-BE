@@ -1,6 +1,6 @@
 package com.wave.wavi.habit.service;
 
-import com.wave.wavi.habit.dto.HabitSaveRequestDto;
+import com.wave.wavi.habit.dto.HabitRequestDto;
 import com.wave.wavi.habit.model.Habit;
 import com.wave.wavi.habit.model.HabitSchedule;
 import com.wave.wavi.habit.model.StatusType;
@@ -21,8 +21,9 @@ public class HabitService {
     private final HabitRepository habitRepository;
     private final HabitScheduleRepository habitScheduleRepository;
 
+    // 습관 등록 - 습관
     @Transactional
-    public Long saveHabit(HabitSaveRequestDto requestDto, User user) {
+    public Long saveHabit(HabitRequestDto requestDto, User user) {
         Habit habit = Habit.builder()
                 .name(requestDto.getName())
                 .icon(requestDto.getIcon())
@@ -32,13 +33,14 @@ public class HabitService {
         return habitRepository.save(habit).getId();
     }
 
+    // 습관 등록 - 계획
     @Transactional
-    public void saveWeekOfDays(HabitSaveRequestDto requestDto, Long habitId) {
+    public void saveDaysOfWeek(HabitRequestDto requestDto, Long habitId) {
         Habit habit = habitRepository.findById(habitId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 습관을 찾지 못했습니다."));
-        List<Integer> dayOfWeeks = requestDto.getDayOfWeek();
+        List<Integer> daysOfWeek = requestDto.getDayOfWeek();
 
-        for (int dayOfWeek : dayOfWeeks) {
+        for (int dayOfWeek : daysOfWeek) {
             HabitSchedule habitSchedule = HabitSchedule.builder()
                     .habit(habit)
                     .dayOfWeek(dayOfWeek)
@@ -46,9 +48,48 @@ public class HabitService {
             habitScheduleRepository.save(habitSchedule);
         }
 
-        LocalDate date = LocalDate.now();
-        int today = date.getDayOfWeek().getValue();
+        updateHabitStatusToday(habit);
+    }
 
+    // 습관 수정
+    @Transactional
+    public void updateHabit(HabitRequestDto requestDto, Long habitId) {
+        Habit habit = habitRepository.findById(habitId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 습관을 찾지 못했습니다."));
+        if (requestDto.getName() != null) {
+            habit.setName(requestDto.getName());
+        }
+        if (requestDto.getIcon() != null) {
+            habit.setIcon(requestDto.getIcon());
+        }
+        if(requestDto.getDayOfWeek() != null) {
+            List<Integer> daysOfWeek = requestDto.getDayOfWeek();
+            List<HabitSchedule> oldSchedules = habitScheduleRepository.findByHabitId(habitId);
+
+            for (HabitSchedule oldSchedule : oldSchedules) {
+                if (!daysOfWeek.contains(oldSchedule.getDayOfWeek())) {
+                    habitScheduleRepository.delete(oldSchedule);
+                }
+            }
+
+            for (int dayOfWeek : daysOfWeek) {
+                boolean exists = habitScheduleRepository.existsByHabitIdAndDayOfWeek(habitId, dayOfWeek);
+                if (!exists) {
+                    HabitSchedule habitSchedule = HabitSchedule.builder()
+                            .habit(habit)
+                            .dayOfWeek(dayOfWeek)
+                            .build();
+                    habitScheduleRepository.save(habitSchedule);
+                }
+            }
+
+            updateHabitStatusToday(habit);
+        }
+    }
+
+    // 습관 계획에 따른 습관 활성화/비활성화
+    private void updateHabitStatusToday(Habit habit) {
+        int today = LocalDate.now().getDayOfWeek().getValue();
         boolean exists = habitScheduleRepository.existsByHabitIdAndDayOfWeek(habit.getId(), today);
         habit.setStatus(exists ? StatusType.ACTIVE : StatusType.DEACTIVE);
     }

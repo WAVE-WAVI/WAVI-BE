@@ -1,16 +1,13 @@
 package com.wave.wavi.habit.controller;
 
 import com.wave.wavi.common.ResponseDto;
-import com.wave.wavi.habit.dto.HabitSaveRequestDto;
+import com.wave.wavi.habit.dto.HabitRequestDto;
 import com.wave.wavi.habit.service.HabitService;
 import com.wave.wavi.user.model.LoginType;
 import com.wave.wavi.user.model.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +18,7 @@ public class HabitController {
 
     // 습관 등록
     @PostMapping("")
-    public ResponseDto<Object> save(@RequestBody HabitSaveRequestDto requestDto/*, @AuthenticationPrincipal PrincipalDetail principal*/) {
+    public ResponseDto<Object> save(@RequestBody HabitRequestDto requestDto/*, @AuthenticationPrincipal PrincipalDetail principal*/) {
         // 더미 유저 정보
         User user = User.builder()
                 .id(1L)
@@ -33,11 +30,21 @@ public class HabitController {
                 .build();
 
         Long habitId = habitService.saveHabit(requestDto, user /*principal.getUser()*/);
-        habitService.saveWeekOfDays(requestDto, habitId);
+        habitService.saveDaysOfWeek(requestDto, habitId);
 
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
                 .message("습관 등록 성공")
+                .build();
+    }
+
+    // 습관 수정
+    @PatchMapping("/{habitId}")
+    public ResponseDto<Object> update(@RequestBody HabitRequestDto requestDto, @PathVariable Long habitId) {
+        habitService.updateHabit(requestDto, habitId);
+        return ResponseDto.builder()
+                .status(HttpStatus.OK.value())
+                .message("습관 수정 성공")
                 .build();
     }
 }
