@@ -1,5 +1,5 @@
 package com.wave.wavi.habit.model;
 
 public enum StatusType {
-    ACTIVE, COMPLETED, DEACTIVE
+    ACTIVE, DEACTIVE, COMPLETED
 }

@@ -3,21 +3,19 @@ package com.wave.wavi.habit.model;
 import com.wave.wavi.common.BaseTimeEntity;
 import com.wave.wavi.user.model.User;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLRestriction("deleted_at IS NULL")
 public class Habit extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, unique = true)
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -25,7 +23,7 @@ public class Habit extends BaseTimeEntity {
     private User user;
 
     @Column(nullable = false)
-    private int icon;
+    private Long icon;
 
     @Column(nullable = false)
     private String name;
@@ -33,6 +31,18 @@ public class Habit extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private StatusType status;
+
+    @Column
+    private LocalDateTime deletedAt;
+
+    @Builder
+    public Habit(User user, Long icon, String name, StatusType status) {
+        this.user = user;
+        this.icon = icon;
+        this.name = name;
+        this.status = status;
+        this.deletedAt = null;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -42,7 +52,7 @@ public class Habit extends BaseTimeEntity {
         this.user = user;
     }
 
-    public void setIcon(int icon) {
+    public void setIcon(Long icon) {
         this.icon = icon;
     }
 
@@ -52,5 +62,9 @@ public class Habit extends BaseTimeEntity {
 
     public void setStatus(StatusType status) {
         this.status = status;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
     }
 }

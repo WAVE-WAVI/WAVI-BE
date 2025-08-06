@@ -1,21 +1,21 @@
 package com.wave.wavi.habit.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @Entity
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "habit_schedule", uniqueConstraints = {
+        @UniqueConstraint(
+                name = "HABITSCHEDULE_UNIQUE",
+                columnNames = {"habit_id", "day_of_week"}
+        )
+})
 public class HabitSchedule {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false, unique = true)
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -23,7 +23,13 @@ public class HabitSchedule {
     private Habit habit;
 
     @Column(nullable = false)
-    private Long dayOfWeek;
+    private int dayOfWeek;
+
+    @Builder
+    public HabitSchedule(Habit habit, int dayOfWeek) {
+        this.habit = habit;
+        this.dayOfWeek = dayOfWeek;
+    }
 
     public void setId(Long id) {
         this.id = id;
@@ -33,7 +39,7 @@ public class HabitSchedule {
         this.habit = habit;
     }
 
-    public void setDayOfWeek(Long dayOfWeek) {
+    public void setDayOfWeek(int dayOfWeek) {
         this.dayOfWeek = dayOfWeek;
     }
 }
