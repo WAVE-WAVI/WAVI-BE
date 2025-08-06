@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface HabitRepository extends JpaRepository<Habit, Long> {
-    List<Habit> findByUserId(Long userId);
+    List<Habit> findByUserIdAndDeletedAtNull(Long userId);
 }

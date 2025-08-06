@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -94,7 +95,7 @@ public class HabitService {
     public void deleteHabit(Long habitId) {
         Habit habit = habitRepository.findById(habitId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 습관을 찾지 못했습니다."));
-        habit.setStatus(StatusType.DELETED);
+        habit.setDeletedAt(LocalDateTime.now());
     }
 
     // 단일 습관 조회
@@ -108,19 +109,15 @@ public class HabitService {
     // 내 모든 습관 조회
     @Transactional
     public List<HabitResponseDto> getAllHabits(User user) {
-        List<Habit> habits = habitRepository.findByUserId(user.getId());
+        List<Habit> habits = habitRepository.findByUserIdAndDeletedAtNull(user.getId());
         updateHabitStatusAll(habits);
-        List<Habit> filteredHabits = habits
-                .stream()
-                .filter(habit -> habit.getStatus() != StatusType.DELETED)
-                .toList();
-        return habitsToDto(filteredHabits);
+        return habitsToDto(habits);
     }
 
     // 오늘의 습관 조회
     @Transactional
     public List<HabitResponseDto> getTodayHabits(User user) {
-        List<Habit> habits = habitRepository.findByUserId(user.getId());
+        List<Habit> habits = habitRepository.findByUserIdAndDeletedAtNull(user.getId());
         updateHabitStatusAll(habits);
         List<Habit> filteredHabits = habits
                 .stream()
@@ -163,9 +160,7 @@ public class HabitService {
     @Transactional
     public void updateHabitStatusAll(List<Habit> habits){
         for (Habit habit : habits) {
-            if (habit.getStatus() != StatusType.DELETED) {
                 updateHabitStatusToday(habit);
-            }
         }
     }
 }

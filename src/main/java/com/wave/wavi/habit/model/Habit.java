@@ -4,10 +4,14 @@ import com.wave.wavi.common.BaseTimeEntity;
 import com.wave.wavi.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.SQLRestriction;
+
+import java.time.LocalDateTime;
 
 @Getter
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLRestriction("deleted_at IS NULL")
 public class Habit extends BaseTimeEntity {
 
     @Id
@@ -28,12 +32,16 @@ public class Habit extends BaseTimeEntity {
     @Column(nullable = false)
     private StatusType status;
 
+    @Column
+    private LocalDateTime deletedAt;
+
     @Builder
     public Habit(User user, Long icon, String name, StatusType status) {
         this.user = user;
         this.icon = icon;
         this.name = name;
         this.status = status;
+        this.deletedAt = null;
     }
 
     public void setId(Long id) {
@@ -54,5 +62,9 @@ public class Habit extends BaseTimeEntity {
 
     public void setStatus(StatusType status) {
         this.status = status;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
     }
 }
