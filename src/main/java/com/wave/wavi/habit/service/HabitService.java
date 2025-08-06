@@ -103,6 +103,7 @@ public class HabitService {
     public HabitResponseDto getHabit(Long habitId) {
         Habit habit = habitRepository.findById(habitId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 습관을 찾지 못했습니다."));
+        updateHabitStatusToday(habit);
         return habitToDto(habit);
     }
 
@@ -121,7 +122,7 @@ public class HabitService {
         updateHabitStatusAll(habits);
         List<Habit> filteredHabits = habits
                 .stream()
-                .filter(habit -> habit.getStatus() == StatusType.ACTIVE)
+                .filter(habit -> habit.getStatus() == StatusType.ACTIVE || habit.getStatus() == StatusType.COMPLETED)
                 .toList();
         return habitsToDto(filteredHabits);
     }
@@ -154,13 +155,13 @@ public class HabitService {
     public void updateHabitStatusToday(Habit habit) {
         int today = LocalDate.now().getDayOfWeek().getValue();
         boolean exists = habitScheduleRepository.existsByHabitIdAndDayOfWeek(habit.getId(), today);
-        habit.setStatus(exists ? StatusType.ACTIVE : StatusType.DEACTIVE);
+        habit.setStatus(exists ? (habit.getStatus() == StatusType.COMPLETED ? StatusType.COMPLETED : StatusType.ACTIVE) : StatusType.DEACTIVE);
     }
 
     @Transactional
-    public void updateHabitStatusAll(List<Habit> habits){
+    public void updateHabitStatusAll(List<Habit> habits) {
         for (Habit habit : habits) {
-                updateHabitStatusToday(habit);
+            updateHabitStatusToday(habit);
         }
     }
 }
