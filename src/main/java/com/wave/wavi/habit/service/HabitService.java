@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -88,9 +89,17 @@ public class HabitService {
     }
 
     // 습관 계획에 따른 습관 활성화/비활성화
-    private void updateHabitStatusToday(Habit habit) {
+    @Transactional
+    public void updateHabitStatusToday(Habit habit) {
         int today = LocalDate.now().getDayOfWeek().getValue();
         boolean exists = habitScheduleRepository.existsByHabitIdAndDayOfWeek(habit.getId(), today);
         habit.setStatus(exists ? StatusType.ACTIVE : StatusType.DEACTIVE);
+    }
+
+    @Transactional
+    public void deleteHabit(Long habitId) {
+        Habit habit = habitRepository.findById(habitId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 습관을 찾지 못했습니다."));
+        habit.setStatus(StatusType.DELETED);
     }
 }

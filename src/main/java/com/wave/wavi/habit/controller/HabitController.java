@@ -47,4 +47,14 @@ public class HabitController {
                 .message("습관 수정 성공")
                 .build();
     }
+
+    // 습관 삭제
+    @DeleteMapping("/{habitId}")
+    public ResponseDto<Object> delete(@PathVariable Long habitId) {
+        habitService.deleteHabit(habitId);
+        return ResponseDto.builder()
+                .status(HttpStatus.OK.value())
+                .message("습관 삭제 성공")
+                .build();
+    }
 }
