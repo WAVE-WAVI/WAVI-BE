@@ -1,6 +1,7 @@
 package com.wave.wavi.log.controller;
 
 import com.wave.wavi.common.ResponseDto;
+import com.wave.wavi.log.dto.HabitFailureLogRequestDto;
 import com.wave.wavi.log.dto.HabitSuccessLogRequestDto;
 import com.wave.wavi.log.service.HabitLogService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,16 @@ public class HabitLogController {
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
                 .message("성공 기록 저장 성공")
+                .build();
+    }
+
+    // 실패 기록
+    @PostMapping("/failure")
+    public ResponseDto<Object> saveFailure(@RequestBody HabitFailureLogRequestDto requestDto) {
+        habitLogService.saveFailure(requestDto);
+        return ResponseDto.builder()
+                .status(HttpStatus.OK.value())
+                .message("실패 기록 저장 성공")
                 .build();
     }
 }
