@@ -3,13 +3,14 @@ package com.wave.wavi.log.controller;
 import com.wave.wavi.common.ResponseDto;
 import com.wave.wavi.log.dto.HabitFailureLogRequestDto;
 import com.wave.wavi.log.dto.HabitSuccessLogRequestDto;
+import com.wave.wavi.log.model.FailureReason;
+import com.wave.wavi.log.model.FailureType;
 import com.wave.wavi.log.service.HabitLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -35,6 +36,17 @@ public class HabitLogController {
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
                 .message("실패 기록 저장 성공")
+                .build();
+    }
+
+    // 실패 이유 조회(목록용)
+    @GetMapping("/failure")
+    public ResponseDto<Object> getFailureLog(@RequestParam (name = "type", required = true) FailureType type) {
+        List<FailureReason> failureReasons = habitLogService.getFailureReasons(type);
+        return ResponseDto.builder()
+                .status(HttpStatus.OK.value())
+                .message("실패 목록 조회 성공")
+                .data(failureReasons)
                 .build();
     }
 }

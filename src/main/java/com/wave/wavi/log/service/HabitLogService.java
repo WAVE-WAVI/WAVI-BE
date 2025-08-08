@@ -5,6 +5,7 @@ import com.wave.wavi.habit.repository.HabitRepository;
 import com.wave.wavi.log.dto.HabitFailureLogRequestDto;
 import com.wave.wavi.log.dto.HabitSuccessLogRequestDto;
 import com.wave.wavi.log.model.FailureReason;
+import com.wave.wavi.log.model.FailureType;
 import com.wave.wavi.log.model.HabitFailureLog;
 import com.wave.wavi.log.model.HabitLog;
 import com.wave.wavi.log.repository.FailureReasonRepository;
@@ -62,5 +63,10 @@ public class HabitLogService {
                     .build();
             habitFailureLogRepository.save(habitFailureLog);
         }
+    }
+
+    @Transactional
+    public List<FailureReason> getFailureReasons(FailureType type) {
+        return failureReasonRepository.findByType(type);
     }
 }
