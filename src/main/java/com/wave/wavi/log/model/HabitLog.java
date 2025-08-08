@@ -1,6 +1,7 @@
 package com.wave.wavi.log.model;
 
 import com.wave.wavi.habit.model.Habit;
+import com.wave.wavi.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -25,6 +26,10 @@ public class HabitLog {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "habitId")
     private Habit habit;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "userId")
+    private User user;
 
     @Column(nullable = false)
     private LocalDate date;

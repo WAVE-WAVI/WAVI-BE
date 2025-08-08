@@ -3,6 +3,7 @@ package com.wave.wavi.log.service;
 import com.wave.wavi.habit.model.Habit;
 import com.wave.wavi.habit.repository.HabitRepository;
 import com.wave.wavi.log.dto.HabitFailureLogRequestDto;
+import com.wave.wavi.log.dto.HabitLogResponseDto;
 import com.wave.wavi.log.dto.HabitSuccessLogRequestDto;
 import com.wave.wavi.log.model.FailureReason;
 import com.wave.wavi.log.model.FailureType;
@@ -17,7 +18,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -33,12 +37,13 @@ public class HabitLogService {
         Habit habit = habitRepository.findById(requestDto.getHabitId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 습관을 찾지 못했습니다."));
         HabitLog habitLog = HabitLog.builder()
-                    .habit(habit)
-                    .date(LocalDate.now())
-                    .completed(true)
-                    .startTime(requestDto.getStartTime())
-                    .endTime(requestDto.getEndTime())
-                    .build();
+                .habit(habit)
+                .user(habit.getUser())
+                .date(LocalDate.now())
+                .completed(true)
+                .startTime(requestDto.getStartTime())
+                .endTime(requestDto.getEndTime())
+                .build();
         habitLogRepository.save(habitLog);
     }
 
@@ -48,6 +53,7 @@ public class HabitLogService {
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 습관을 찾지 못했습니다."));
         HabitLog habitLog = HabitLog.builder()
                 .habit(habit)
+                .user(habit.getUser())
                 .date(LocalDate.now())
                 .completed(false)
                 .build();
@@ -68,5 +74,38 @@ public class HabitLogService {
     @Transactional
     public List<FailureReason> getFailureReasons(FailureType type) {
         return failureReasonRepository.findByType(type);
+    }
+
+    @Transactional
+    public List<HabitLogResponseDto> getLogs(Long habitId, LocalDate date, Boolean completed, Long userId) {
+        List<HabitLog> logs = habitLogRepository.findByUserId(userId);
+        logs = logs
+            .stream()
+            .filter(log -> habitId == null || Objects.equals(log.getHabit().getId(), habitId))
+            .filter(log -> date == null || log.getDate().equals(date))
+            .filter(log -> completed == null || completed == log.isCompleted())
+            .toList();
+
+        List<HabitLogResponseDto> habitLogResponseDtos = new ArrayList<>();
+        for (HabitLog log : logs) {
+            List<HabitFailureLog> failureLogs = habitFailureLogRepository.findByHabitLogId(log.getId());
+            List<FailureReason> failureReasons = failureLogs
+                    .stream()
+                    .map(HabitFailureLog::getReason)
+                    .toList();
+
+            HabitLogResponseDto habitLogResponseDto = HabitLogResponseDto.builder()
+                    .id(log.getId())
+                    .habitId(log.getHabit().getId())
+                    .date(log.getDate())
+                    .completed(log.isCompleted())
+                    .startTime(log.getStartTime())
+                    .endTime(log.getEndTime())
+                    .failureReasons(failureReasons)
+                    .build();
+
+            habitLogResponseDtos.add(habitLogResponseDto);
+        }
+        return habitLogResponseDtos;
     }
 }
