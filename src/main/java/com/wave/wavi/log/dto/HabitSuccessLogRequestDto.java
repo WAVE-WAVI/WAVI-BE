@@ -9,7 +9,7 @@ import java.sql.Time;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class HabitLogRequestDto {
+public class HabitSuccessLogRequestDto {
     private Long habitId;
     private Time startTime;
     private Time endTime;

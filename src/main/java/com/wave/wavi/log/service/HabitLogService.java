@@ -2,7 +2,7 @@ package com.wave.wavi.log.service;
 
 import com.wave.wavi.habit.model.Habit;
 import com.wave.wavi.habit.repository.HabitRepository;
-import com.wave.wavi.log.dto.HabitLogRequestDto;
+import com.wave.wavi.log.dto.HabitSuccessLogRequestDto;
 import com.wave.wavi.log.model.HabitLog;
 import com.wave.wavi.log.repository.HabitLogRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class HabitLogService {
     private final HabitRepository habitRepository;
 
     @Transactional
-    public void saveSuccess(@RequestBody HabitLogRequestDto requestDto) {
+    public void saveSuccess(@RequestBody HabitSuccessLogRequestDto requestDto) {
         Habit habit = habitRepository.findById(requestDto.getHabitId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 습관을 찾지 못했습니다."));
         HabitLog habitLog = HabitLog.builder()

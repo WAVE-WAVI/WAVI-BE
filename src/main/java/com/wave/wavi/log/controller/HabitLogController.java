@@ -1,7 +1,7 @@
 package com.wave.wavi.log.controller;
 
 import com.wave.wavi.common.ResponseDto;
-import com.wave.wavi.log.dto.HabitLogRequestDto;
+import com.wave.wavi.log.dto.HabitSuccessLogRequestDto;
 import com.wave.wavi.log.service.HabitLogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ public class HabitLogController {
 
     // 성공 기록
     @PostMapping("/success")
-    public ResponseDto<Object> saveSuccess(@RequestBody HabitLogRequestDto requestDto) {
+    public ResponseDto<Object> saveSuccess(@RequestBody HabitSuccessLogRequestDto requestDto) {
         habitLogService.saveSuccess(requestDto);
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
