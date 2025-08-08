@@ -41,7 +41,7 @@ public class HabitLogController {
 
     // 실패 이유 조회(목록용)
     @GetMapping("/failure")
-    public ResponseDto<Object> getFailureLog(@RequestParam (name = "type", required = true) FailureType type) {
+    public ResponseDto<Object> getFailureReasons(@RequestParam (name = "type", required = true) FailureType type) {
         List<FailureReason> failureReasons = habitLogService.getFailureReasons(type);
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
