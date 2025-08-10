@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Time;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -42,6 +44,9 @@ public class HabitLog {
 
     @Column
     private Time endTime;
+
+    @OneToMany(mappedBy = "habitLog", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE,orphanRemoval = true)
+    private List<HabitFailureLog> failureLogs = new ArrayList<>();
 
     public void setId(Long id) {
         this.id = id;
