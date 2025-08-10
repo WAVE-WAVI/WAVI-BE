@@ -87,7 +87,7 @@ public class HabitLogService {
 
         List<HabitLogResponseDto> habitLogResponseDtos = new ArrayList<>();
         for (HabitLog log : logs) {
-            List<HabitFailureLog> failureLogs = habitFailureLogRepository.findByHabitLogId(log.getId());
+            List<HabitFailureLog> failureLogs = log.getFailureLogs();
             List<FailureReason> failureReasons = failureLogs
                     .stream()
                     .map(HabitFailureLog::getReason)
