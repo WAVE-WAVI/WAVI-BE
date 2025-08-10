@@ -79,4 +79,14 @@ public class HabitLogController {
                 .data(logs)
                 .build();
     }
+
+    // 기록 삭제
+    @DeleteMapping("/{logId}")
+    public ResponseDto<Object> deleteLog(@PathVariable Long logId) {
+        habitLogService.deleteLog(logId);
+        return ResponseDto.builder()
+                .status(HttpStatus.OK.value())
+                .message("기록 삭제 성공")
+                .build();
+    }
 }
