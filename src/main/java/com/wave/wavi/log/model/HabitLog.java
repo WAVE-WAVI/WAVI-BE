@@ -1,6 +1,7 @@
 package com.wave.wavi.log.model;
 
 import com.wave.wavi.habit.model.Habit;
+import com.wave.wavi.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,6 +10,8 @@ import lombok.NoArgsConstructor;
 
 import java.sql.Time;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
@@ -26,6 +29,10 @@ public class HabitLog {
     @JoinColumn(name = "habitId")
     private Habit habit;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "userId")
+    private User user;
+
     @Column(nullable = false)
     private LocalDate date;
 
@@ -37,6 +44,9 @@ public class HabitLog {
 
     @Column
     private Time endTime;
+
+    @OneToMany(mappedBy = "habitLog", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE,orphanRemoval = true)
+    private List<HabitFailureLog> failureLogs = new ArrayList<>();
 
     public void setId(Long id) {
         this.id = id;
