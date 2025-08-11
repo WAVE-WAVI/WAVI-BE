@@ -109,7 +109,7 @@ public class HabitLogService {
     }
 
     @Transactional
-    public void deleteLog(Long habitId) {
-        habitLogRepository.deleteById(habitId);
+    public void deleteLog(Long logId) {
+        habitLogRepository.deleteById(logId);
     }
 }
