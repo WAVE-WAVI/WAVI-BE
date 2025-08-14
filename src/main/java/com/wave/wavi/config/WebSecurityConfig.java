@@ -21,6 +21,7 @@ public class WebSecurityConfig {
                                 "/api/v1/user/signup",
                                 "/api/v1/user/login"
                         ).permitAll()
+                        .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form.disable())
