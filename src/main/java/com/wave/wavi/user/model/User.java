@@ -33,7 +33,7 @@ public class User extends BaseTimeEntity {
     private String nickname;
 
     @Column(nullable = false)
-    private Long birth_year;
+    private Long birthYear;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -70,8 +70,8 @@ public class User extends BaseTimeEntity {
         this.profileImage = profileImage;
     }
 
-    public void setBirth_year(Long birth_year) {
-        this.birth_year = birth_year;
+    public void setBirthYear(Long birthYear) {
+        this.birthYear = birthYear;
     }
 
     public void setGender(Gender gender) {
