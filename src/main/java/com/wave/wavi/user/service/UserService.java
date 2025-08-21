@@ -5,9 +5,7 @@ import com.wave.wavi.user.dto.UserSignupRequestDto;
 import com.wave.wavi.user.model.User;
 import com.wave.wavi.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.antlr.v4.runtime.tree.Tree;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,8 +25,11 @@ public class UserService {
         User user = User.builder()
                 .email(requestDto.getEmail())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
-                .nickname(requestDto.getNickname())
                 .loginType(requestDto.getLoginType())
+                .nickname(requestDto.getNickname())
+                .birthYear(requestDto.getBirthYear())
+                .gender(requestDto.getGender())
+                .job(requestDto.getJob())
                 .profileImage(requestDto.getProfileImage())
                 .build();
         return userRepository.save(user);
