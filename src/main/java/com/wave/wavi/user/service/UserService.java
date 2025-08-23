@@ -28,7 +28,7 @@ public class UserService {
                 .loginType(requestDto.getLoginType())
                 .nickname(requestDto.getNickname())
                 .birthYear(requestDto.getBirthYear())
-                .genderType(requestDto.getGenderType())
+                .gender(requestDto.getGender())
                 .job(requestDto.getJob())
                 .profileImage(requestDto.getProfileImage())
                 .build();
