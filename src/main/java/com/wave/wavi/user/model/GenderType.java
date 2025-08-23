@@ -1,5 +1,5 @@
 package com.wave.wavi.user.model;
 
-public enum Gender {
+public enum GenderType {
     MALE, FEMALE, UNKNOWN
 }

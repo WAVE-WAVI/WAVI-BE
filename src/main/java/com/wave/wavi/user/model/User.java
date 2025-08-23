@@ -37,11 +37,11 @@ public class User extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Gender gender;
+    private GenderType gender;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Job job;
+    private JobType job;
 
     @Column(nullable = false)
     private Long profileImage;
@@ -74,11 +74,11 @@ public class User extends BaseTimeEntity {
         this.birthYear = birthYear;
     }
 
-    public void setGender(Gender gender) {
+    public void setGender(GenderType gender) {
         this.gender = gender;
     }
 
-    public void setJob(Job job) {
+    public void setJob(JobType job) {
         this.job = job;
     }
 }

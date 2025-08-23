@@ -1,5 +1,5 @@
 package com.wave.wavi.user.model;
 
-public enum Job {
+public enum JobType {
     STUDENT, SALARYMAN, JOBLESS, CEO
 }
