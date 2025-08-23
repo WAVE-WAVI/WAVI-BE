@@ -33,6 +33,17 @@ public class User extends BaseTimeEntity {
     private String nickname;
 
     @Column(nullable = false)
+    private Long birthYear;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private GenderType gender;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private JobType job;
+
+    @Column(nullable = false)
     private Long profileImage;
 
     public void setId(Long id) {
@@ -57,5 +68,17 @@ public class User extends BaseTimeEntity {
 
     public void setProfileImage(Long profileImage) {
         this.profileImage = profileImage;
+    }
+
+    public void setBirthYear(Long birthYear) {
+        this.birthYear = birthYear;
+    }
+
+    public void setGender(GenderType gender) {
+        this.gender = gender;
+    }
+
+    public void setJob(JobType job) {
+        this.job = job;
     }
 }
