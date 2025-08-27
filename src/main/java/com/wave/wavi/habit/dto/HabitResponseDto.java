@@ -15,7 +15,6 @@ public class HabitResponseDto {
         private Long icon;
         private List<Integer> dayOfWeek;
         private StatusType status;
-        private Long aim;
         private Time startTime;
         private Time endTime;
 }

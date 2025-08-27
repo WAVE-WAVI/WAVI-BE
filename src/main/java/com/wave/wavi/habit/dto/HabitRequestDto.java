@@ -14,7 +14,6 @@ public class HabitRequestDto {
     private String name;
     private List<Integer> dayOfWeek;
     private Long icon;
-    private Long aim;
     private Time startTime;
     private Time endTime;
 }
