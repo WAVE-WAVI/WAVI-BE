@@ -10,6 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HabitFailureLogRequestDto {
-    private Long habitId;
     private List<Long> failureReasonIds;
+    private String customReason;
 }
