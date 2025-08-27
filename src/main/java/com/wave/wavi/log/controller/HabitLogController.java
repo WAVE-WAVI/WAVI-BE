@@ -3,9 +3,7 @@ package com.wave.wavi.log.controller;
 import com.wave.wavi.common.ResponseDto;
 import com.wave.wavi.log.dto.HabitFailureLogRequestDto;
 import com.wave.wavi.log.dto.HabitLogResponseDto;
-import com.wave.wavi.log.dto.HabitSuccessLogRequestDto;
 import com.wave.wavi.log.model.FailureReason;
-import com.wave.wavi.log.model.FailureType;
 import com.wave.wavi.log.service.HabitLogService;
 import com.wave.wavi.user.model.LoginType;
 import com.wave.wavi.user.model.User;
@@ -24,9 +22,9 @@ public class HabitLogController {
     private final HabitLogService habitLogService;
 
     // 성공 기록
-    @PostMapping("/success")
-    public ResponseDto<Object> saveSuccess(@RequestBody HabitSuccessLogRequestDto requestDto) {
-        habitLogService.saveSuccess(requestDto);
+    @PostMapping("/success/{habitId}")
+    public ResponseDto<Object> saveSuccess(@PathVariable Long habitId) {
+        habitLogService.saveSuccess(habitId);
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
                 .message("성공 기록 저장 성공")
@@ -34,9 +32,9 @@ public class HabitLogController {
     }
 
     // 실패 기록
-    @PostMapping("/failure")
-    public ResponseDto<Object> saveFailure(@RequestBody HabitFailureLogRequestDto requestDto) {
-        habitLogService.saveFailure(requestDto);
+    @PostMapping("/failure/{habitId}")
+    public ResponseDto<Object> saveFailure(@PathVariable Long habitId, @RequestBody HabitFailureLogRequestDto requestDto) {
+        habitLogService.saveFailure(habitId, requestDto);
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
                 .message("실패 기록 저장 성공")
@@ -45,8 +43,8 @@ public class HabitLogController {
 
     // 실패 이유 조회(목록용)
     @GetMapping("/failure")
-    public ResponseDto<Object> getFailureReasons(@RequestParam (name = "type", required = true) FailureType type) {
-        List<FailureReason> failureReasons = habitLogService.getFailureReasons(type);
+    public ResponseDto<Object> getFailureReasons() {
+        List<FailureReason> failureReasons = habitLogService.getFailureReasons();
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
                 .message("실패 목록 조회 성공")
@@ -58,7 +56,8 @@ public class HabitLogController {
     @GetMapping("")
     public ResponseDto<Object> getLogs(
             @RequestParam (name = "habitId", required = false) Long habitId,
-            @RequestParam (name = "date", required = false) LocalDate date,
+            @RequestParam (name = "startDate", required = false) LocalDate startDate,
+            @RequestParam (name = "endDate", required = false) LocalDate endDate,
             @RequestParam (name = "completed", required = false) Boolean completed/*,
             @AuthenticationPrincipal PrincipalDetail principal*/
     ) {
@@ -72,7 +71,7 @@ public class HabitLogController {
                 .profileImage(Long.valueOf(2))
                 .build();
 
-        List<HabitLogResponseDto> logs = habitLogService.getLogs(habitId, date, completed, user.getId());
+        List<HabitLogResponseDto> logs = habitLogService.getLogs(habitId, startDate, endDate, completed, user.getId());
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
                 .message("기록 조회 성공")

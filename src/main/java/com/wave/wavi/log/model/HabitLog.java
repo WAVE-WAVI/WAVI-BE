@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.sql.Time;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,13 +38,7 @@ public class HabitLog {
     @Column(nullable = false)
     private boolean completed;
 
-    @Column
-    private Time startTime;
-
-    @Column
-    private Time endTime;
-
-    @OneToMany(mappedBy = "habitLog", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE,orphanRemoval = true)
+    @OneToMany(mappedBy = "habitLog", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<HabitFailureLog> failureLogs = new ArrayList<>();
 
     public void setId(Long id) {
@@ -62,13 +55,5 @@ public class HabitLog {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
-    }
-
-    public void setStartTime(Time startTime) {
-        this.startTime = startTime;
-    }
-
-    public void setEndTime(Time endTime) {
-        this.endTime = endTime;
     }
 }

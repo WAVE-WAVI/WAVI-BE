@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLRestriction;
 
+import java.sql.Time;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Entity
@@ -32,15 +34,23 @@ public class Habit extends BaseTimeEntity {
     @Column(nullable = false)
     private StatusType status;
 
+    @Column(nullable = false)
+    private LocalTime startTime;
+
+    @Column(nullable = false)
+    private LocalTime endTime;
+
     @Column
     private LocalDateTime deletedAt;
 
     @Builder
-    public Habit(User user, Long icon, String name, StatusType status) {
+    public Habit(User user, Long icon, String name, StatusType status, LocalTime startTime, LocalTime endTime) {
         this.user = user;
         this.icon = icon;
         this.name = name;
         this.status = status;
+        this.startTime = startTime;
+        this.endTime = endTime;
         this.deletedAt = null;
     }
 
@@ -62,6 +72,14 @@ public class Habit extends BaseTimeEntity {
 
     public void setStatus(StatusType status) {
         this.status = status;
+    }
+
+    public void setStartTime(LocalTime startTime) {
+        this.startTime = startTime;
+    }
+
+    public void setEndTime(LocalTime endTime) {
+        this.endTime = endTime;
     }
 
     public void setDeletedAt(LocalDateTime deletedAt) {

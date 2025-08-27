@@ -18,19 +18,11 @@ public class FailureReason {
     @Column(nullable = false, unique = true)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private FailureType type;
-
     @Column(nullable = false)
     private String reason;
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public void setType(FailureType type) {
-        this.type = type;
     }
 
     public void setReason(String reason) {

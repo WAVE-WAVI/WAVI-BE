@@ -32,6 +32,8 @@ public class HabitService {
                 .icon(requestDto.getIcon())
                 .user(user)
                 .status(StatusType.DEACTIVE)
+                .startTime(requestDto.getStartTime())
+                .endTime(requestDto.getEndTime())
                 .build();
         return habitRepository.save(habit).getId();
     }
@@ -64,6 +66,12 @@ public class HabitService {
         }
         if (requestDto.getIcon() != null) {
             habit.setIcon(requestDto.getIcon());
+        }
+        if (requestDto.getStartTime() != null) {
+            habit.setStartTime(requestDto.getStartTime());
+        }
+        if (requestDto.getEndTime() != null) {
+            habit.setEndTime(requestDto.getEndTime());
         }
         if(requestDto.getDayOfWeek() != null) {
             List<Integer> daysOfWeek = requestDto.getDayOfWeek();
@@ -138,6 +146,8 @@ public class HabitService {
                 .name(habit.getName())
                 .icon(habit.getIcon())
                 .status(habit.getStatus())
+                .startTime(habit.getStartTime())
+                .endTime(habit.getEndTime())
                 .dayOfWeek(daysOfWeek)
                 .build();
     }

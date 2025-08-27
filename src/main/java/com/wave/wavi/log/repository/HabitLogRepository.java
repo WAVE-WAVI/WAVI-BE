@@ -5,8 +5,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface HabitLogRepository extends JpaRepository<HabitLog, Long> {
     List<HabitLog> findByUserId(Long userId);
+
+    Optional<Object> findByHabitId(Long habitId);
 }
