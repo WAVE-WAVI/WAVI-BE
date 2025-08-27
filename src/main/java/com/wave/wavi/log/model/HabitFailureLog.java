@@ -31,4 +31,11 @@ public class HabitFailureLog {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "reasonId")
     private FailureReason reason;
+
+    @Column
+    private String customReason;
+
+    public void setCustomReason(String customReason) {
+        this.customReason = customReason;
+    }
 }
