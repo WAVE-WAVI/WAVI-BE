@@ -4,7 +4,7 @@ import com.wave.wavi.habit.model.StatusType;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.sql.Time;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -15,6 +15,6 @@ public class HabitResponseDto {
         private Long icon;
         private List<Integer> dayOfWeek;
         private StatusType status;
-        private Time startTime;
-        private Time endTime;
+        private LocalTime startTime;
+        private LocalTime endTime;
 }

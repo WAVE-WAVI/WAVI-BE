@@ -8,6 +8,7 @@ import org.hibernate.annotations.SQLRestriction;
 
 import java.sql.Time;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @Entity
@@ -34,16 +35,16 @@ public class Habit extends BaseTimeEntity {
     private StatusType status;
 
     @Column(nullable = false)
-    private Time startTime;
+    private LocalTime startTime;
 
     @Column(nullable = false)
-    private Time endTime;
+    private LocalTime endTime;
 
     @Column
     private LocalDateTime deletedAt;
 
     @Builder
-    public Habit(User user, Long icon, String name, StatusType status, Time startTime, Time endTime) {
+    public Habit(User user, Long icon, String name, StatusType status, LocalTime startTime, LocalTime endTime) {
         this.user = user;
         this.icon = icon;
         this.name = name;
@@ -73,11 +74,11 @@ public class Habit extends BaseTimeEntity {
         this.status = status;
     }
 
-    public void setStartTime(Time startTime) {
+    public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
 
-    public void setEndTime(Time endTime) {
+    public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
     }
 

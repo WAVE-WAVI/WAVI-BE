@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.sql.Time;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -14,6 +14,6 @@ public class HabitRequestDto {
     private String name;
     private List<Integer> dayOfWeek;
     private Long icon;
-    private Time startTime;
-    private Time endTime;
+    private LocalTime startTime;
+    private LocalTime endTime;
 }
