@@ -11,6 +11,8 @@ import com.wave.wavi.log.model.HabitLog;
 import com.wave.wavi.log.repository.FailureReasonRepository;
 import com.wave.wavi.log.repository.HabitFailureLogRepository;
 import com.wave.wavi.log.repository.HabitLogRepository;
+import com.wave.wavi.user.model.User;
+import com.wave.wavi.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +22,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +31,7 @@ public class HabitLogService {
     private final HabitRepository habitRepository;
     private final HabitFailureLogRepository habitFailureLogRepository;
     private final FailureReasonRepository failureReasonRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public void saveSuccess(Long habitId) {
@@ -84,8 +86,10 @@ public class HabitLogService {
     }
 
     @Transactional
-    public List<HabitLogResponseDto> getLogs(Long habitId, LocalDate startDate, LocalDate endDate, Boolean completed, Long userId) {
-        List<HabitLog> logs = habitLogRepository.findByUserId(userId);
+    public List<HabitLogResponseDto> getLogs(Long habitId, LocalDate startDate, LocalDate endDate, Boolean completed, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 email의 유저를 찾지 못했습니다."));
+        List<HabitLog> logs = habitLogRepository.findByUserId(user.getId());
         logs = logs
             .stream()
             .filter(log -> habitId == null || Objects.equals(log.getHabit().getId(), habitId))

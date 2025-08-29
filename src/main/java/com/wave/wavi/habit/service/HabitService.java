@@ -8,6 +8,8 @@ import com.wave.wavi.habit.model.StatusType;
 import com.wave.wavi.habit.repository.HabitRepository;
 import com.wave.wavi.habit.repository.HabitScheduleRepository;
 import com.wave.wavi.user.model.User;
+import com.wave.wavi.user.repository.UserRepository;
+import com.wave.wavi.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,10 +25,13 @@ public class HabitService {
 
     private final HabitRepository habitRepository;
     private final HabitScheduleRepository habitScheduleRepository;
+    private final UserRepository userRepository;
 
     // 습관 등록 - 습관
     @Transactional
-    public Long saveHabit(HabitRequestDto requestDto, User user) {
+    public Long saveHabit(HabitRequestDto requestDto, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 email의 유저를 찾지 못했습니다."));
         Habit habit = Habit.builder()
                 .name(requestDto.getName())
                 .icon(requestDto.getIcon())
@@ -117,7 +122,9 @@ public class HabitService {
 
     // 내 모든 습관 조회
     @Transactional
-    public List<HabitResponseDto> getAllHabits(User user) {
+    public List<HabitResponseDto> getAllHabits(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 email의 유저를 찾지 못했습니다."));
         List<Habit> habits = habitRepository.findByUserIdAndDeletedAtNull(user.getId());
         updateHabitStatusAll(habits);
         return habitsToDto(habits);
@@ -125,7 +132,9 @@ public class HabitService {
 
     // 오늘의 습관 조회
     @Transactional
-    public List<HabitResponseDto> getTodayHabits(User user) {
+    public List<HabitResponseDto> getTodayHabits(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 email의 유저를 찾지 못했습니다."));
         List<Habit> habits = habitRepository.findByUserIdAndDeletedAtNull(user.getId());
         updateHabitStatusAll(habits);
         List<Habit> filteredHabits = habits

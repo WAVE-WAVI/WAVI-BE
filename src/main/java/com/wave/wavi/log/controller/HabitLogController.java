@@ -1,12 +1,12 @@
 package com.wave.wavi.log.controller;
 
 import com.wave.wavi.common.ResponseDto;
+import com.wave.wavi.config.jwt.JwtUtil;
 import com.wave.wavi.log.dto.HabitFailureLogRequestDto;
 import com.wave.wavi.log.dto.HabitLogResponseDto;
 import com.wave.wavi.log.model.FailureReason;
 import com.wave.wavi.log.service.HabitLogService;
-import com.wave.wavi.user.model.LoginType;
-import com.wave.wavi.user.model.User;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +20,7 @@ import java.util.List;
 public class HabitLogController {
 
     private final HabitLogService habitLogService;
+    private final JwtUtil jwtUtil;
 
     // 성공 기록
     @PostMapping("/success/{habitId}")
@@ -58,20 +59,11 @@ public class HabitLogController {
             @RequestParam (name = "habitId", required = false) Long habitId,
             @RequestParam (name = "startDate", required = false) LocalDate startDate,
             @RequestParam (name = "endDate", required = false) LocalDate endDate,
-            @RequestParam (name = "completed", required = false) Boolean completed/*,
-            @AuthenticationPrincipal PrincipalDetail principal*/
+            @RequestParam (name = "completed", required = false) Boolean completed,
+            HttpServletRequest request
     ) {
-        // 더미 유저 정보
-        User user = User.builder()
-                .id(1L)
-                .email("test@gmail.com")
-                .loginType(LoginType.NORMAL)
-                .nickname("test")
-                .password("1234")
-                .profileImage(Long.valueOf(2))
-                .build();
-
-        List<HabitLogResponseDto> logs = habitLogService.getLogs(habitId, startDate, endDate, completed, user.getId());
+        String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).getSubject();
+        List<HabitLogResponseDto> logs = habitLogService.getLogs(habitId, startDate, endDate, completed, email);
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
                 .message("기록 조회 성공")
