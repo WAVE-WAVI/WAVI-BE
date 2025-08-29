@@ -23,7 +23,7 @@ public class HabitController {
     // 습관 등록
     @PostMapping("")
     public ResponseDto<Object> saveHabit(@RequestBody HabitRequestDto requestDto, HttpServletRequest request) {
-        String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).get("sub").toString();
+        String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).getSubject();
         Long habitId = habitService.saveHabit(requestDto, email);
         habitService.saveDaysOfWeek(requestDto, habitId);
         return ResponseDto.builder()
@@ -66,7 +66,7 @@ public class HabitController {
     // 내 모든 습관 조회
     @GetMapping("")
     public ResponseDto<Object> getAllHabits(HttpServletRequest request) {
-        String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).get("sub").toString();
+        String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).getSubject();
         List<HabitResponseDto> habits = habitService.getAllHabits(email);
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
@@ -78,7 +78,7 @@ public class HabitController {
     // 오늘의 습관 조회
     @GetMapping("/today")
     public ResponseDto<Object> getTodayHabits(HttpServletRequest request) {
-        String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).get("sub").toString();
+        String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).getSubject();
         List<HabitResponseDto> habits = habitService.getTodayHabits(email);
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())

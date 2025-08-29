@@ -62,7 +62,7 @@ public class HabitLogController {
             @RequestParam (name = "completed", required = false) Boolean completed,
             HttpServletRequest request
     ) {
-        String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).get("sub").toString();
+        String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).getSubject();
         List<HabitLogResponseDto> logs = habitLogService.getLogs(habitId, startDate, endDate, completed, email);
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
