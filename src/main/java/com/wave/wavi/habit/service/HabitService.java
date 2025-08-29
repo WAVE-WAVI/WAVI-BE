@@ -31,7 +31,7 @@ public class HabitService {
     @Transactional
     public Long saveHabit(HabitRequestDto requestDto, String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("해당 email의 유저를을 찾지 못했습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 email의 유저를 찾지 못했습니다."));
         Habit habit = Habit.builder()
                 .name(requestDto.getName())
                 .icon(requestDto.getIcon())
@@ -124,7 +124,7 @@ public class HabitService {
     @Transactional
     public List<HabitResponseDto> getAllHabits(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("해당 email의 유저를을 찾지 못했습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 email의 유저를 찾지 못했습니다."));
         List<Habit> habits = habitRepository.findByUserIdAndDeletedAtNull(user.getId());
         updateHabitStatusAll(habits);
         return habitsToDto(habits);
@@ -134,7 +134,7 @@ public class HabitService {
     @Transactional
     public List<HabitResponseDto> getTodayHabits(String email) {
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("해당 email의 유저를을 찾지 못했습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("해당 email의 유저를 찾지 못했습니다."));
         List<Habit> habits = habitRepository.findByUserIdAndDeletedAtNull(user.getId());
         updateHabitStatusAll(habits);
         List<Habit> filteredHabits = habits
