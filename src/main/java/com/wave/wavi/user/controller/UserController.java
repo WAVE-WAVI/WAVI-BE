@@ -31,11 +31,11 @@ public class UserController {
     //로그인
     @PostMapping("/login")
     public ResponseDto<Object> login(@RequestBody UserLoginRequestDto requestDto) {
-        User user = userService.login(requestDto);
+        String token = userService.login(requestDto);
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
                 .message("로그인 성공")
-                .data(user.getId())
+                .data(token)
                 .build();
     }
 }

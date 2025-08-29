@@ -1,5 +1,6 @@
 package com.wave.wavi.user.service;
 
+import com.wave.wavi.config.jwt.JwtUtil;
 import com.wave.wavi.user.dto.UserLoginRequestDto;
 import com.wave.wavi.user.dto.UserSignupRequestDto;
 import com.wave.wavi.user.model.User;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder passwordEncoder;
+    private final JwtUtil jwtUtil;
 
     //회원가입
     @Transactional
@@ -37,12 +39,12 @@ public class UserService {
 
     //로그인
     @Transactional(readOnly = true)
-    public User login(UserLoginRequestDto requestDto) {
+    public String login(UserLoginRequestDto requestDto) {
         User user = userRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일입니다."));
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
-        return user;
+        return jwtUtil.createToken(user.getEmail());
     }
 }
