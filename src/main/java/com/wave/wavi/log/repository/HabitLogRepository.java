@@ -10,6 +10,4 @@ import java.util.Optional;
 @Repository
 public interface HabitLogRepository extends JpaRepository<HabitLog, Long> {
     List<HabitLog> findByUserId(Long userId);
-
-    Optional<Object> findByHabitId(Long habitId);
 }
