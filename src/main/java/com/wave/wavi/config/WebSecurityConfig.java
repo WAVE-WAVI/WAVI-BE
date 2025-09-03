@@ -32,6 +32,7 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 "/api/v1/user/signup",
                                 "/api/v1/user/login",
+                                "/api/v1/user/login/oauth2/code/google",
                                 "/swagger-ui/**",
                                 "/v3/api-docs/**"
                         ).permitAll()
