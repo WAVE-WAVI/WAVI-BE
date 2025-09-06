@@ -18,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -43,6 +44,7 @@ public class OAuthService {
     private String googleRedirectUri;
 
     //구글 로그인
+    @Transactional
     public String googleLogin(String code) throws JsonProcessingException {
         String accessToken = getGoogleAccessToken(code);
         JsonNode googleUserInfo = getGoogleUserInfo(accessToken);
