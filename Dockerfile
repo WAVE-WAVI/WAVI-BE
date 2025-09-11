@@ -7,7 +7,7 @@ COPY src ./src
 RUN ./gradlew bootJar -x test
 
 # 2단계: JRE만 포함된 가벼운 최종 이미지 생성
-FROM openjdk:17-jre-slim
+FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 COPY --from=build /app/build/libs/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "app.jar"]
