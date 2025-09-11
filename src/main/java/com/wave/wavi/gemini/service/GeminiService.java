@@ -92,7 +92,7 @@ public class GeminiService {
 
 **부족 정보 처리 예시:**
 - "코딩 1시간씩 하고 싶어"
-  → {"icon": "💻", "name": "코딩 1시간", "startTime": null, "endTime": null, "dayOfWeek": null, "needMoreInfo": true, "ask": "수행 가능한 시간 범위(시작~종료 시간)와 요일을 알려주세요."}
+  → {"icon": 1, "name": "코딩 1시간", "startTime": null, "endTime": null, "dayOfWeek": null, "needMoreInfo": true, "ask": "수행 가능한 시간 범위(시작~종료 시간)와 요일을 알려주세요."}
 """, String.join("\n", requestDto.getHistory()), requestDto.getCurrentPrompt());
 
         GenerateContentResponse response =
