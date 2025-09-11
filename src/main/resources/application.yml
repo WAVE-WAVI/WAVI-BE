@@ -17,6 +17,18 @@ spring:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${CLIENT_ID}
+            client-secret: ${CLIENT_SECRET}
+            redirect-uri: http://localhost:8080/api/v1/user/login/oauth2/code/google
+            scope:
+              - email
+              - profile
+
 jwt:
   secret:
     key: ${JWT_SECRET_KEY}
