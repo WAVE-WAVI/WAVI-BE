@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @Getter
 @Entity
 @Builder
@@ -46,6 +48,9 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false)
     private Long profileImage;
 
+    @Column
+    private LocalDate lastHabitUpdateDate;
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -80,5 +85,9 @@ public class User extends BaseTimeEntity {
 
     public void setJob(JobType job) {
         this.job = job;
+    }
+
+    public void setLastHabitUpdateDate(LocalDate lastHabitUpdateDate) {
+        this.lastHabitUpdateDate = lastHabitUpdateDate;
     }
 }

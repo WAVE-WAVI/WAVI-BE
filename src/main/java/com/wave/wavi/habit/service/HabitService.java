@@ -9,7 +9,6 @@ import com.wave.wavi.habit.repository.HabitRepository;
 import com.wave.wavi.habit.repository.HabitScheduleRepository;
 import com.wave.wavi.user.model.User;
 import com.wave.wavi.user.repository.UserRepository;
-import com.wave.wavi.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -58,7 +57,7 @@ public class HabitService {
             habitScheduleRepository.save(habitSchedule);
         }
 
-        updateHabitStatusToday(habit);
+        updateHabitStatus(habit);
     }
 
     // 습관 수정
@@ -99,7 +98,7 @@ public class HabitService {
                 }
             }
 
-            updateHabitStatusToday(habit);
+            updateHabitStatus(habit);
         }
     }
 
@@ -116,7 +115,6 @@ public class HabitService {
     public HabitResponseDto getHabit(Long habitId) {
         Habit habit = habitRepository.findById(habitId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 습관을 찾지 못했습니다."));
-        updateHabitStatusToday(habit);
         return habitToDto(habit);
     }
 
@@ -126,7 +124,6 @@ public class HabitService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 email의 유저를 찾지 못했습니다."));
         List<Habit> habits = habitRepository.findByUserIdAndDeletedAtNull(user.getId());
-        updateHabitStatusAll(habits);
         return habitsToDto(habits);
     }
 
@@ -136,7 +133,6 @@ public class HabitService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 email의 유저를 찾지 못했습니다."));
         List<Habit> habits = habitRepository.findByUserIdAndDeletedAtNull(user.getId());
-        updateHabitStatusAll(habits);
         List<Habit> filteredHabits = habits
                 .stream()
                 .filter(habit -> habit.getStatus() == StatusType.ACTIVE || habit.getStatus() == StatusType.COMPLETED)
@@ -171,16 +167,24 @@ public class HabitService {
 
     // 습관 계획에 따른 습관 활성화/비활성화
     @Transactional
-    public void updateHabitStatusToday(Habit habit) {
+    public void updateHabitStatus(Habit habit) {
         int today = LocalDate.now().getDayOfWeek().getValue();
         boolean exists = habitScheduleRepository.existsByHabitIdAndDayOfWeek(habit.getId(), today);
-        habit.setStatus(exists ? (habit.getStatus() == StatusType.COMPLETED ? StatusType.COMPLETED : StatusType.ACTIVE) : StatusType.DEACTIVE);
+        habit.setStatus(exists ? StatusType.ACTIVE : StatusType.DEACTIVE);
     }
 
     @Transactional
-    public void updateHabitStatusAll(List<Habit> habits) {
-        for (Habit habit : habits) {
-            updateHabitStatusToday(habit);
+    public void updateHabitStatusDaily(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 email의 유저를 찾지 못했습니다."));
+        if (user.getLastHabitUpdateDate() == null || !user.getLastHabitUpdateDate().equals(LocalDate.now())) {
+            List<Habit> habits = habitRepository.findByUserIdAndDeletedAtNull(user.getId());
+            for (Habit habit : habits) {
+                updateHabitStatus(habit);
+            }
+            user.setLastHabitUpdateDate(LocalDate.now());
+        } else {
+            throw new IllegalArgumentException("오늘은 이미 상태를 갱신했습니다.");
         }
     }
 }
