@@ -25,7 +25,7 @@ public class MainController {
         MainResponseDto mainResponseDto = mainService.main(email);
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
-                .message("습관 조회 성공")
+                .message("메인화면 정보 불러오기 성공")
                 .data(mainResponseDto)
                 .build();
     }
