@@ -86,4 +86,14 @@ public class HabitController {
                 .data(habits)
                 .build();
     }
+
+    @PostMapping("/status")
+    public ResponseDto<Object> updateHabitStatus(HttpServletRequest request) {
+        String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).getSubject();
+        habitService.updateHabitStatusDaily(email);
+        return ResponseDto.builder()
+                .status(HttpStatus.OK.value())
+                .message("습관 상태 갱신 성공")
+                .build();
+    }
 }
