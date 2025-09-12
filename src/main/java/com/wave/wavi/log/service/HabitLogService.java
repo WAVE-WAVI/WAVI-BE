@@ -41,6 +41,7 @@ public class HabitLogService {
         HabitLog habitLog = HabitLog.builder()
                 .habit(habit)
                 .user(habit.getUser())
+                .name(habit.getName())
                 .date(LocalDate.now())
                 .completed(true)
                 .build();
@@ -54,6 +55,7 @@ public class HabitLogService {
         HabitLog habitLog = HabitLog.builder()
                 .habit(habit)
                 .user(habit.getUser())
+                .name(habit.getName())
                 .date(LocalDate.now())
                 .completed(false)
                 .build();
@@ -115,6 +117,7 @@ public class HabitLogService {
             HabitLogResponseDto habitLogResponseDto = HabitLogResponseDto.builder()
                     .id(log.getId())
                     .habitId(log.getHabit().getId())
+                    .name(log.getName())
                     .date(log.getDate())
                     .completed(log.isCompleted())
                     .failureReasons(failureReasons)

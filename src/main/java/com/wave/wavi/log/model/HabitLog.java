@@ -33,6 +33,9 @@ public class HabitLog {
     private User user;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private LocalDate date;
 
     @Column(nullable = false)
@@ -47,6 +50,10 @@ public class HabitLog {
 
     public void setHabit(Habit habit) {
         this.habit = habit;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setDate(LocalDate date) {

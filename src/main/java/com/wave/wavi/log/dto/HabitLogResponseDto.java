@@ -12,6 +12,7 @@ import java.util.List;
 public class HabitLogResponseDto {
     private Long id;
     private Long habitId;
+    private String name;
     private LocalDate date;
     private boolean completed;
     private List<FailureReason> failureReasons;
