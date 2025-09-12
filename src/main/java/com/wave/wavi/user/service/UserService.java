@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wave.wavi.config.jwt.JwtUtil;
+import com.wave.wavi.user.dto.ProfileUpdateRequestDto;
 import com.wave.wavi.user.dto.UserLoginRequestDto;
 import com.wave.wavi.user.dto.UserSignupRequestDto;
 import com.wave.wavi.user.model.GenderType;
@@ -65,5 +66,13 @@ public class UserService {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
         return jwtUtil.createToken(user.getEmail());
+    }
+
+    //개인 정보 수정
+    @Transactional
+    public void updateProfile(String email, ProfileUpdateRequestDto requestDto) {
+        User user = userRepository
+                .findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+        user.updateProfile(requestDto);
     }
 }

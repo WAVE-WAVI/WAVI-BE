@@ -2,13 +2,17 @@ package com.wave.wavi.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wave.wavi.common.ResponseDto;
+import com.wave.wavi.config.security.UserDetailsServiceImpl;
+import com.wave.wavi.user.dto.ProfileUpdateRequestDto;
 import com.wave.wavi.user.dto.UserLoginRequestDto;
 import com.wave.wavi.user.dto.UserSignupRequestDto;
 import com.wave.wavi.user.model.User;
 import com.wave.wavi.user.oauth.OAuthService;
+import com.wave.wavi.user.security.UserDetailsImpl;
 import com.wave.wavi.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -47,6 +51,18 @@ public class UserController {
                 .status(HttpStatus.OK.value())
                 .message("구글 로그인 성공")
                 .data(token)
+                .build();
+    }
+
+    @PatchMapping("/profile")
+    public ResponseDto<String> updateProfile(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody ProfileUpdateRequestDto requestDto) {
+        String userEmail = userDetails.getUser().getEmail();
+        userService.updateProfile(userEmail, requestDto);
+        return ResponseDto.<String>builder()
+                .status(HttpStatus.OK.value())
+                .message("프로필 수정 성공")
                 .build();
     }
 }
