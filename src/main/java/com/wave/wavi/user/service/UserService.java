@@ -54,6 +54,7 @@ public class UserService {
                 .job(requestDto.getJob())
                 .profileImage(requestDto.getProfileImage())
                 .build();
+
         return userRepository.save(user);
     }
 
@@ -62,9 +63,11 @@ public class UserService {
     public String login(UserLoginRequestDto requestDto) {
         User user = userRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 이메일입니다."));
+
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
+
         return jwtUtil.createToken(user.getEmail());
     }
 
@@ -73,6 +76,21 @@ public class UserService {
     public void updateProfile(String email, ProfileUpdateRequestDto requestDto) {
         User user = userRepository
                 .findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-        user.updateProfile(requestDto);
+
+        if (requestDto.getNickname() != null) {
+            user.setNickname(requestDto.getNickname());
+        }
+        if (requestDto.getProfileImage() != null) {
+            user.setProfileImage(requestDto.getProfileImage());
+        }
+        if (requestDto.getBirthYear() != null) {
+            user.setBirthYear(requestDto.getBirthYear());
+        }
+        if (requestDto.getGender() != null) {
+            user.setGender(requestDto.getGender());
+        }
+        if (requestDto.getJob() != null) {
+            user.setJob(requestDto.getJob());
+        }
     }
 }
