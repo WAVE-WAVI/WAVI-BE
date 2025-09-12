@@ -1,6 +1,7 @@
 package com.wave.wavi.user.model;
 
 import com.wave.wavi.common.BaseTimeEntity;
+import com.wave.wavi.user.dto.ProfileUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -80,5 +81,23 @@ public class User extends BaseTimeEntity {
 
     public void setJob(JobType job) {
         this.job = job;
+    }
+
+    public void updateProfile(ProfileUpdateRequestDto requestDto) {
+        if (requestDto.getNickname() != null) {
+            this.nickname = requestDto.getNickname();
+        }
+        if (requestDto.getProfileImage() != null) {
+            this.profileImage = requestDto.getProfileImage();
+        }
+        if (requestDto.getBirthYear() != null) {
+            this.birthYear = requestDto.getBirthYear();
+        }
+        if (requestDto.getGender() != null) {
+            this.gender = requestDto.getGender();
+        }
+        if (requestDto.getJob() != null) {
+            this.job = requestDto.getJob();
+        }
     }
 }
