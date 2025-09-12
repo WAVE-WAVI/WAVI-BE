@@ -1,6 +1,7 @@
 package com.wave.wavi.user.model;
 
 import com.wave.wavi.common.BaseTimeEntity;
+import com.wave.wavi.user.dto.ProfileUpdateRequestDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

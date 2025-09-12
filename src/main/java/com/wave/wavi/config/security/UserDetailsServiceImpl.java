@@ -2,17 +2,17 @@ package com.wave.wavi.config.security;
 
 import com.wave.wavi.user.model.User;
 import com.wave.wavi.user.repository.UserRepository;
+import com.wave.wavi.user.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
+
     private final UserRepository userRepository;
 
     @Override
@@ -20,10 +20,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다.: " + email));
 
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(),
-                user.getPassword(),
-                Collections.emptyList()
-        );
+        return new UserDetailsImpl(user);
     }
 }
