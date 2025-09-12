@@ -11,5 +11,5 @@ import java.util.List;
 public class MainResponseDto {
     private String nickname;
     private Long profileImage;
-    private List<HabitResponseDto> todayHabits;
+    private List<HabitResponseDto> habits;
 }

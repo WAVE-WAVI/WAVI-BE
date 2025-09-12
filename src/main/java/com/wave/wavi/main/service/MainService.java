@@ -35,7 +35,7 @@ public class MainService {
         return MainResponseDto.builder()
                 .nickname(user.getNickname())
                 .profileImage(user.getProfileImage())
-                .todayHabits(todayHabits)
+                .habits(todayHabits)
                 .build();
     }
 
