@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wave.wavi.config.jwt.JwtUtil;
+import com.wave.wavi.user.dto.PasswordUpdateRequestDto;
 import com.wave.wavi.user.dto.ProfileUpdateRequestDto;
 import com.wave.wavi.user.dto.UserLoginRequestDto;
 import com.wave.wavi.user.dto.UserSignupRequestDto;
@@ -92,5 +93,20 @@ public class UserService {
         if (requestDto.getJob() != null) {
             user.setJob(requestDto.getJob());
         }
+    }
+
+    @Transactional
+    public void updatePassword(String email, PasswordUpdateRequestDto requestDto) {
+        User user = userRepository
+                .findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+        if (!passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
+        }
+        if (passwordEncoder.matches(requestDto.getNewPassword(), user.getPassword())) {
+            throw new IllegalArgumentException("새 비밀번호는 현재 비밀번호와 같을 수 없습니다.");
+        }
+
+        String newHashedPassword = passwordEncoder.encode(requestDto.getNewPassword());
+        user.setPassword(newHashedPassword);
     }
 }
