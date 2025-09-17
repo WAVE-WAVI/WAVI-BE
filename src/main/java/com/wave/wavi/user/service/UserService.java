@@ -96,7 +96,7 @@ public class UserService {
     }
 
     @Transactional
-    public void UpdatePassword(String email, PasswordUpdateRequestDto requestDto) {
+    public void updatePassword(String email, PasswordUpdateRequestDto requestDto) {
         User user = userRepository
                 .findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
         if (!passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword())) {

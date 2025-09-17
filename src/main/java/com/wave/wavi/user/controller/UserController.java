@@ -75,7 +75,7 @@ public class UserController {
             @RequestBody PasswordUpdateRequestDto requestDto) {
 
         String userEmail = userDetails.getUser().getEmail();
-        userService.UpdatePassword(userEmail, requestDto);
+        userService.updatePassword(userEmail, requestDto);
 
         return ResponseDto.<String>builder()
                 .status(HttpStatus.OK.value())
