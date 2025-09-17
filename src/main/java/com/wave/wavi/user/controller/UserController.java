@@ -3,10 +3,7 @@ package com.wave.wavi.user.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wave.wavi.common.ResponseDto;
 import com.wave.wavi.config.security.UserDetailsServiceImpl;
-import com.wave.wavi.user.dto.PasswordUpdateRequestDto;
-import com.wave.wavi.user.dto.ProfileUpdateRequestDto;
-import com.wave.wavi.user.dto.UserLoginRequestDto;
-import com.wave.wavi.user.dto.UserSignupRequestDto;
+import com.wave.wavi.user.dto.*;
 import com.wave.wavi.user.model.User;
 import com.wave.wavi.user.oauth.OAuthService;
 import com.wave.wavi.user.security.UserDetailsImpl;
@@ -29,7 +26,7 @@ public class UserController {
         userService.signup(requestDto);
         return ResponseDto.builder()
                 .status(HttpStatus.CREATED.value())
-                .message("회원 가입이 완료되었습니다.")
+                .message("회원 가입 완료")
                 .build();
     }
 
@@ -80,6 +77,16 @@ public class UserController {
         return ResponseDto.<String>builder()
                 .status(HttpStatus.OK.value())
                 .message("비밀번호 수정 성공")
+                .build();
+    }
+
+    //이메일 인증
+    @PostMapping("/verify")
+    public ResponseDto<String> verifyEmail(@RequestBody EmailVerificationRequestDto requestDto) {
+        userService.verifyEmail(requestDto);
+        return ResponseDto.<String>builder()
+                .status(HttpStatus.OK.value())
+                .message("이메일 인증 완료")
                 .build();
     }
 }

@@ -3,11 +3,9 @@ package com.wave.wavi.user.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wave.wavi.common.email.EmailService;
 import com.wave.wavi.config.jwt.JwtUtil;
-import com.wave.wavi.user.dto.PasswordUpdateRequestDto;
-import com.wave.wavi.user.dto.ProfileUpdateRequestDto;
-import com.wave.wavi.user.dto.UserLoginRequestDto;
-import com.wave.wavi.user.dto.UserSignupRequestDto;
+import com.wave.wavi.user.dto.*;
 import com.wave.wavi.user.model.GenderType;
 import com.wave.wavi.user.model.JobType;
 import com.wave.wavi.user.model.LoginType;
@@ -37,26 +35,33 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final EmailService emailService;
 
     //회원가입
     @Transactional
-    public User signup(UserSignupRequestDto requestDto) {
+    public void signup(UserSignupRequestDto requestDto) {
         if (userRepository.existsByEmail(requestDto.getEmail())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
 
+        String vertificationCode = String.valueOf((int) (Math.random() * 900000) + 100000);
+
         User user = User.builder()
                 .email(requestDto.getEmail())
                 .password(passwordEncoder.encode(requestDto.getPassword()))
-                .loginType(requestDto.getLoginType())
+                .loginType(LoginType.NORMAL)
                 .nickname(requestDto.getNickname())
                 .birthYear(requestDto.getBirthYear())
                 .gender(requestDto.getGender())
                 .job(requestDto.getJob())
                 .profileImage(requestDto.getProfileImage())
+                .emailVerified(false)
+                .verificationCode(vertificationCode)
                 .build();
 
-        return userRepository.save(user);
+        userRepository.save(user);
+
+        emailService.sendVertificationEmail(user.getEmail(),  vertificationCode);
     }
 
     //로그인
@@ -67,6 +72,10 @@ public class UserService {
 
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+        }
+
+        if (!user.isEmailVerified()) {
+            throw new IllegalArgumentException("이메일 인증이 완료되지 않았습니다.");
         }
 
         return jwtUtil.createToken(user.getEmail());
@@ -95,6 +104,7 @@ public class UserService {
         }
     }
 
+    //비밀번호 수정
     @Transactional
     public void updatePassword(String email, PasswordUpdateRequestDto requestDto) {
         User user = userRepository
@@ -108,5 +118,23 @@ public class UserService {
 
         String newHashedPassword = passwordEncoder.encode(requestDto.getNewPassword());
         user.setPassword(newHashedPassword);
+    }
+
+    //이메일 인증
+    @Transactional
+    public void verifyEmail(EmailVerificationRequestDto requestDto) {
+        User user = userRepository.findByEmail(requestDto.getEmail())
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+
+        if (user.isEmailVerified()) {
+            throw new IllegalArgumentException("이미 인증이 완료된 사용자입니다.");
+        }
+
+        if (!user.getVerificationCode().equals(requestDto.getCode())) {
+            throw new IllegalArgumentException("인증 코드가 일치하지 않습니다.");
+        }
+
+        user.setEmailVerified(true);
+        user.setVerificationCode(null);
     }
 }
