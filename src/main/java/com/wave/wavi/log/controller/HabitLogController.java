@@ -24,8 +24,9 @@ public class HabitLogController {
 
     // 성공 기록
     @PostMapping("/success/{habitId}")
-    public ResponseDto<Object> saveSuccess(@PathVariable Long habitId) {
-        habitLogService.saveSuccess(habitId);
+    public ResponseDto<Object> saveSuccess(@PathVariable Long habitId, HttpServletRequest request) {
+        String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).getSubject();
+        habitLogService.saveSuccess(habitId, email);
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
                 .message("성공 기록 저장 성공")
@@ -34,8 +35,9 @@ public class HabitLogController {
 
     // 실패 기록
     @PostMapping("/failure/{habitId}")
-    public ResponseDto<Object> saveFailure(@PathVariable Long habitId, @RequestBody HabitFailureLogRequestDto requestDto) {
-        habitLogService.saveFailure(habitId, requestDto);
+    public ResponseDto<Object> saveFailure(@PathVariable Long habitId, @RequestBody HabitFailureLogRequestDto requestDto, HttpServletRequest request) {
+        String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).getSubject();
+        habitLogService.saveFailure(habitId, email, requestDto);
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
                 .message("실패 기록 저장 성공")

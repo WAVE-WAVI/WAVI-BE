@@ -1,4 +1,4 @@
-package com.wave.wavi.gemini.dto;
+package com.wave.wavi.habit.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

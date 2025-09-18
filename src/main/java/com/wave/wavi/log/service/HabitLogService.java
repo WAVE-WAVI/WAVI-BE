@@ -34,13 +34,19 @@ public class HabitLogService {
     private final UserRepository userRepository;
 
     @Transactional
-    public void saveSuccess(Long habitId) {
+    public void saveSuccess(Long habitId, String email) {
         Habit habit = habitRepository.findById(habitId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 습관을 찾지 못했습니다."));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저 정보를 찾지 못했습니다."));
+        if (!user.getId().equals(habit.getUser().getId())) {
+            throw new IllegalArgumentException("해당 유저의 습관이 아닙니다.");
+        }
         habit.setStatus(StatusType.COMPLETED);
         HabitLog habitLog = HabitLog.builder()
                 .habit(habit)
                 .user(habit.getUser())
+                .name(habit.getName())
                 .date(LocalDate.now())
                 .completed(true)
                 .build();
@@ -48,12 +54,18 @@ public class HabitLogService {
     }
 
     @Transactional
-    public void saveFailure(Long habitId, @RequestBody HabitFailureLogRequestDto requestDto) {
+    public void saveFailure(Long habitId, String email, @RequestBody HabitFailureLogRequestDto requestDto) {
         Habit habit = habitRepository.findById(habitId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 습관을 찾지 못했습니다."));
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저 정보를 찾지 못했습니다."));
+        if (!user.getId().equals(habit.getUser().getId())) {
+            throw new IllegalArgumentException("해당 유저의 습관이 아닙니다.");
+        }
         HabitLog habitLog = HabitLog.builder()
                 .habit(habit)
                 .user(habit.getUser())
+                .name(habit.getName())
                 .date(LocalDate.now())
                 .completed(false)
                 .build();
@@ -115,6 +127,7 @@ public class HabitLogService {
             HabitLogResponseDto habitLogResponseDto = HabitLogResponseDto.builder()
                     .id(log.getId())
                     .habitId(log.getHabit().getId())
+                    .name(log.getName())
                     .date(log.getDate())
                     .completed(log.isCompleted())
                     .failureReasons(failureReasons)

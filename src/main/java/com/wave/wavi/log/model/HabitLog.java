@@ -33,12 +33,16 @@ public class HabitLog {
     private User user;
 
     @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private LocalDate date;
 
     @Column(nullable = false)
     private boolean completed;
 
     @OneToMany(mappedBy = "habitLog", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
     private List<HabitFailureLog> failureLogs = new ArrayList<>();
 
     public void setId(Long id) {
@@ -47,6 +51,10 @@ public class HabitLog {
 
     public void setHabit(Habit habit) {
         this.habit = habit;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setDate(LocalDate date) {
