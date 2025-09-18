@@ -180,7 +180,9 @@ public class HabitReportService {
             for (TopFailureReasonResponseDto topFailureReasonResponseDto : topFailureReasonResponseDtos) {
                 for (int i = 1; i <= topFailureReasonResponseDto.getReasons().size(); i++) {
                     TopFailureReason topFailureReason = TopFailureReason.builder()
-                            .habit(habitRepository.findById(topFailureReasonResponseDto.getHabitId()).orElse(null))
+                            .habit(habitRepository.findById(topFailureReasonResponseDto.getHabitId())
+                                    .orElseThrow(() -> new IllegalArgumentException("해당 id의 습관을 찾지 못했습니다."))
+                            )
                             .habitReport(savedHabitReport)
                             .priority((long) i)
                             .reason(topFailureReasonResponseDto.getReasons().get(i - 1))
@@ -193,7 +195,9 @@ public class HabitReportService {
             List<RecommendationResponseDto> recommendationResponseDtos = objectMapper.readValue(jsonObject.get("recommendation").toString(), new TypeReference<>() {});
             for (RecommendationResponseDto recommendationResponseDto : recommendationResponseDtos) {
                 Recommendation recommendation = Recommendation.builder()
-                        .habit(habitRepository.findById(recommendationResponseDto.getHabitId()).orElse(null))
+                        .habit(habitRepository.findById(recommendationResponseDto.getHabitId())
+                                .orElseThrow(() -> new IllegalArgumentException("해당 id의 습관을 찾지 못했습니다."))
+                        )
                         .habitReport(savedHabitReport)
                         .name(recommendationResponseDto.getName())
                         .startTime(recommendationResponseDto.getStartTime())
