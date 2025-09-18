@@ -3,7 +3,6 @@ package com.wave.wavi.report.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.wave.wavi.habit.model.Habit;
 import com.wave.wavi.habit.model.HabitSchedule;
 import com.wave.wavi.habit.repository.HabitRepository;
@@ -145,15 +144,15 @@ public class HabitReportService {
         }
 
         // 요청 Entity 생성
-        HttpEntity<String> entity = new HttpEntity<String>(jsonBody, headers);
+        HttpEntity<String> entity = new HttpEntity<>(jsonBody, headers);
 
         // 요청
         ResponseEntity<String> response = restTemplate.exchange(baseUrl + "/reports/generate", HttpMethod.POST, entity, String.class);
-        System.out.println(response.getBody());
+
         // 통신 성공 시 DB에 저장
         // 응답 json parsing
         JSONParser parser = new JSONParser();
-        JSONObject jsonObject = null;
+        JSONObject jsonObject;
         try {
             jsonObject = (JSONObject) parser.parse(response.getBody());
         } catch (ParseException e) {
@@ -172,7 +171,7 @@ public class HabitReportService {
 
         try {
             // 탑 실패 이유들 저장
-            List<TopFailureReasonResponseDto> topFailureReasonResponseDtos = objectMapper.readValue(jsonObject.get("top_failure_reasons").toString(), new TypeReference<List<TopFailureReasonResponseDto>>() {});
+            List<TopFailureReasonResponseDto> topFailureReasonResponseDtos = objectMapper.readValue(jsonObject.get("top_failure_reasons").toString(), new TypeReference<>() {});
             for (TopFailureReasonResponseDto topFailureReasonResponseDto : topFailureReasonResponseDtos) {
                 for (int i = 1; i <= topFailureReasonResponseDto.getReasons().size(); i++) {
                     TopFailureReason topFailureReason = TopFailureReason.builder()
@@ -186,7 +185,7 @@ public class HabitReportService {
             }
 
             // 추천 저장
-            List<RecommendationResponseDto> recommendationResponseDtos = objectMapper.readValue(jsonObject.get("recommendation").toString(), new TypeReference<List<RecommendationResponseDto>>() {});
+            List<RecommendationResponseDto> recommendationResponseDtos = objectMapper.readValue(jsonObject.get("recommendation").toString(), new TypeReference<>() {});
             for (RecommendationResponseDto recommendationResponseDto : recommendationResponseDtos) {
                 Recommendation recommendation = Recommendation.builder()
                         .habit(habitRepository.findById(recommendationResponseDto.getHabitId()).orElse(null))
