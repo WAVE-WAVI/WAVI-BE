@@ -9,10 +9,12 @@ import com.wave.wavi.user.oauth.OAuthService;
 import com.wave.wavi.user.security.UserDetailsImpl;
 import com.wave.wavi.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
@@ -20,12 +22,22 @@ public class UserController {
     private final UserService userService;
     private final OAuthService oAuthService;
 
-    //회원가입
-    @PostMapping("/signup")
-    public ResponseDto<Object> signup(@RequestBody UserSignupRequestDto requestDto) {
-        userService.signup(requestDto);
-        return ResponseDto.builder()
-                .status(HttpStatus.CREATED.value())
+    //회원 가입 요청
+    @PostMapping("/signup-request")
+    public ResponseDto<String> requestSignup(@RequestBody UserSignupRequestDto requestDto) {
+        userService.requestSignup(requestDto);
+        return ResponseDto.<String>builder()
+                .status(HttpStatus.OK.value())
+                .message("인증 이메일이 발송되었습니다. 10분 내에 인증을 완료해주세요.")
+                .build();
+    }
+
+    //회원 가입
+    @PostMapping("/signup-confirm")
+    public ResponseDto<String> confirmSignup(@RequestBody EmailVerificationRequestDto requestDto) {
+        userService.confirmSign(requestDto);
+        return ResponseDto.<String>builder()
+                .status(HttpStatus.OK.value())
                 .message("회원 가입 완료")
                 .build();
     }
@@ -77,16 +89,6 @@ public class UserController {
         return ResponseDto.<String>builder()
                 .status(HttpStatus.OK.value())
                 .message("비밀번호 수정 성공")
-                .build();
-    }
-
-    //이메일 인증
-    @PostMapping("/verify")
-    public ResponseDto<String> verifyEmail(@RequestBody EmailVerificationRequestDto requestDto) {
-        userService.verifyEmail(requestDto);
-        return ResponseDto.<String>builder()
-                .status(HttpStatus.OK.value())
-                .message("이메일 인증 완료")
                 .build();
     }
 }

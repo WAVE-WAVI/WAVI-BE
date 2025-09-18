@@ -52,12 +52,6 @@ public class User extends BaseTimeEntity {
     @Column
     private LocalDate lastHabitUpdateDate;
 
-    @Column(nullable = false)
-    private boolean emailVerified = false;
-
-    @Column
-    private String verificationCode;
-
     public void setId(Long id) {
         this.id = id;
     }
@@ -96,13 +90,5 @@ public class User extends BaseTimeEntity {
 
     public void setLastHabitUpdateDate(LocalDate lastHabitUpdateDate) {
         this.lastHabitUpdateDate = lastHabitUpdateDate;
-    }
-
-    public void setEmailVerified(boolean emailVerified) {
-        this.emailVerified = emailVerified;
-    }
-
-    public void setVerificationCode(String verificationCode) {
-        this.verificationCode = verificationCode;
     }
 }

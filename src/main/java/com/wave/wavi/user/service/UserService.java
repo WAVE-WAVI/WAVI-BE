@@ -11,9 +11,11 @@ import com.wave.wavi.user.model.JobType;
 import com.wave.wavi.user.model.LoginType;
 import com.wave.wavi.user.model.User;
 import com.wave.wavi.user.repository.UserRepository;
+import jdk.jshell.spi.ExecutionControl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -26,7 +28,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -36,32 +41,56 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final EmailService emailService;
+    private final RedisTemplate<String, Object> redisTemplate;
 
-    //회원가입
-    @Transactional
-    public void signup(UserSignupRequestDto requestDto) {
+    //회원 가입 요총
+    public void requestSignup(UserSignupRequestDto requestDto) {
         if (userRepository.existsByEmail(requestDto.getEmail())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
         }
+        String verificationCode = String.valueOf((int) (Math.random() * 900000) + 100000);
+        String hashedPassword = passwordEncoder.encode(requestDto.getPassword());
 
-        String vertificationCode = String.valueOf((int) (Math.random() * 900000) + 100000);
+        Map<String, Object> signupData = new HashMap<>();
+        signupData.put("password", hashedPassword);
+        signupData.put("nickname", requestDto.getNickname());
+        signupData.put("birthYear", requestDto.getBirthYear());
+        signupData.put("gender", requestDto.getGender());
+        signupData.put("job", requestDto.getJob());
+        signupData.put("profileImage", requestDto.getProfileImage());
+        signupData.put("loginType", LoginType.NORMAL);
+        signupData.put("verificationCode", verificationCode);
+
+        String redisKey = "signup" + requestDto.getEmail();
+        redisTemplate.opsForValue().set(redisKey, signupData, 10, TimeUnit.MINUTES);
+        emailService.sendVertificationEmail(requestDto.getEmail(), verificationCode);
+    }
+
+    //회원 가입
+    @Transactional
+    public void confirmSign(EmailVerificationRequestDto requestDto) {
+        String redisKey = "signup" + requestDto.getEmail();
+        Map<String, Object> signupData = (Map<String, Object>) redisTemplate.opsForValue().get(redisKey);
+        if (signupData == null) {
+            throw new IllegalArgumentException("인증 시간이 만료되었거나 잘못된 요청입니다.");
+        }
+        if (!signupData.get("verificationCode").equals(requestDto.getCode())) {
+            throw new IllegalArgumentException("인증 코드가 일치하지 않습니다.");
+        }
 
         User user = User.builder()
                 .email(requestDto.getEmail())
-                .password(passwordEncoder.encode(requestDto.getPassword()))
-                .loginType(LoginType.NORMAL)
-                .nickname(requestDto.getNickname())
-                .birthYear(requestDto.getBirthYear())
-                .gender(requestDto.getGender())
-                .job(requestDto.getJob())
-                .profileImage(requestDto.getProfileImage())
-                .emailVerified(false)
-                .verificationCode(vertificationCode)
+                .password((String) signupData.get("password"))
+                .nickname((String) signupData.get("nickname"))
+                .birthYear((Long) signupData.get("birthYear"))
+                .gender((GenderType) signupData.get("gender"))
+                .job((JobType) signupData.get("job"))
+                .profileImage((Long) signupData.get("profileImage"))
+                .loginType((LoginType) signupData.get("loginType"))
                 .build();
 
         userRepository.save(user);
-
-        emailService.sendVertificationEmail(user.getEmail(),  vertificationCode);
+        redisTemplate.delete(redisKey);
     }
 
     //로그인
@@ -72,10 +101,6 @@ public class UserService {
 
         if (!passwordEncoder.matches(requestDto.getPassword(), user.getPassword())) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
-
-        if (!user.isEmailVerified()) {
-            throw new IllegalArgumentException("이메일 인증이 완료되지 않았습니다.");
         }
 
         return jwtUtil.createToken(user.getEmail());
@@ -118,23 +143,5 @@ public class UserService {
 
         String newHashedPassword = passwordEncoder.encode(requestDto.getNewPassword());
         user.setPassword(newHashedPassword);
-    }
-
-    //이메일 인증
-    @Transactional
-    public void verifyEmail(EmailVerificationRequestDto requestDto) {
-        User user = userRepository.findByEmail(requestDto.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-
-        if (user.isEmailVerified()) {
-            throw new IllegalArgumentException("이미 인증이 완료된 사용자입니다.");
-        }
-
-        if (!user.getVerificationCode().equals(requestDto.getCode())) {
-            throw new IllegalArgumentException("인증 코드가 일치하지 않습니다.");
-        }
-
-        user.setEmailVerified(true);
-        user.setVerificationCode(null);
     }
 }
