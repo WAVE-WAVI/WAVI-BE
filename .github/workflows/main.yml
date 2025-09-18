@@ -41,10 +41,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd ~/app
-            echo "Bringing down existing containers..."
-            docker compose down
-            
+            cd ~/app          
             echo "Pulling latest docker image..."
             docker compose pull springboot-app
             
