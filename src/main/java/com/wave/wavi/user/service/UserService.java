@@ -43,7 +43,7 @@ public class UserService {
     private final EmailService emailService;
     private final RedisTemplate<String, Object> redisTemplate;
 
-    //회원 가입 요총
+    //회원 가입 요청
     public void requestSignup(UserSignupRequestDto requestDto) {
         if (userRepository.existsByEmail(requestDto.getEmail())) {
             throw new IllegalArgumentException("이미 존재하는 이메일입니다.");
