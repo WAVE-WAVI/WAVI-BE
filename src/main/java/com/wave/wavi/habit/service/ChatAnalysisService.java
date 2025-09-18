@@ -102,7 +102,7 @@ public class ChatAnalysisService {
                         null);
 
         String responseData = response.text();
-        System.out.println(responseData);
+
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = null;
         try {
