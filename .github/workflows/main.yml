@@ -43,10 +43,10 @@ jobs:
           script: |
             cd ~/app
             echo "Pulling latest docker image..."
-            docker-compose pull springboot-app
+            docker compose pull springboot-app
             
             echo "Starting new container..."
-            docker-compose up -d --no-deps springboot-app
+            docker compose up -d --no-deps springboot-app
             
             echo "Waiting for application to start..."
             sleep 15 # 애플리케이션이 시작될 때까지 15초 정도 대기 (시간은 조절 필요)
