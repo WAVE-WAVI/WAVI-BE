@@ -159,6 +159,11 @@ public class HabitReportService {
             throw new RuntimeException(e);
         }
 
+        // 에러 발생 시 핸들링
+        if (jsonObject.get("error") != null) {
+            throw new RuntimeException(jsonObject.get("error").toString());
+        }
+
         // 기록 저장
         HabitReport habitReport = HabitReport.builder()
                 .user(user)
