@@ -8,7 +8,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.sql.Time;
 import java.time.LocalDate;
 
 @Getter
@@ -37,17 +36,8 @@ public class HabitReport extends BaseTimeEntity {
     @Column(nullable = false)
     private LocalDate endDate;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String summary;
-
-    @Column
-    private Time totalTime;
-
-    @Column
-    private String topFailureReasons;
-
-    @Column
-    private String recommendations;
 
     public void setId(Long id) {
         this.id = id;
@@ -71,17 +61,5 @@ public class HabitReport extends BaseTimeEntity {
 
     public void setSummary(String summary) {
         this.summary = summary;
-    }
-
-    public void setTotalTime(Time totalTime) {
-        this.totalTime = totalTime;
-    }
-
-    public void setTopFailureReasons(String topFailureReasons) {
-        this.topFailureReasons = topFailureReasons;
-    }
-
-    public void setRecommendations(String recommendations) {
-        this.recommendations = recommendations;
     }
 }

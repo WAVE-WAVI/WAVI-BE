@@ -1,8 +1,8 @@
-package com.wave.wavi.gemini.service;
+package com.wave.wavi.habit.service;
 
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
-import com.wave.wavi.gemini.dto.ChatAnalysisRequestDto;
+import com.wave.wavi.habit.dto.ChatAnalysisRequestDto;
 import com.wave.wavi.habit.dto.HabitRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class GeminiService {
+public class ChatAnalysisService {
 
     private final Client client;
 
@@ -102,7 +102,7 @@ public class GeminiService {
                         null);
 
         String responseData = response.text();
-        System.out.println(responseData);
+
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = null;
         try {

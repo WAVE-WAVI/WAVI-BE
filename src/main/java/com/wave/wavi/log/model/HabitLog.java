@@ -42,6 +42,7 @@ public class HabitLog {
     private boolean completed;
 
     @OneToMany(mappedBy = "habitLog", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
     private List<HabitFailureLog> failureLogs = new ArrayList<>();
 
     public void setId(Long id) {
