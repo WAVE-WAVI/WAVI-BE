@@ -202,12 +202,26 @@ public class HabitReportService {
                         .name(recommendationResponseDto.getName())
                         .startTime(recommendationResponseDto.getStartTime())
                         .endTime(recommendationResponseDto.getEndTime())
-                        .dayOfWeek(recommendationResponseDto.getDayOfWeek().toString())
+                        .dayOfWeek(recommendationResponseDto.getDayOfWeek())
                         .build();
                 recommendationRepository.save(recommendation);
             }
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Transactional
+    public List<HabitReport> getReport(ReportType type, LocalDate startDate, LocalDate endDate, String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 email의 유저를 찾지 못했습니다."));
+        List<HabitReport> reports = habitReportRepository.findByUserId(user.getId());
+        reports = reports
+                .stream()
+                .filter(report -> type == null || type == report.getType())
+                .filter(report -> startDate == null || report.getStartDate().isEqual(startDate) || report.getStartDate().isAfter(startDate))
+                .filter(report -> endDate == null || report.getEndDate().isEqual(endDate) || report.getEndDate().isBefore(endDate))
+                .toList();
+        return reports;
     }
 }

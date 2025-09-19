@@ -1,5 +1,7 @@
 package com.wave.wavi.report.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wave.wavi.common.util.LongListConvert;
 import com.wave.wavi.habit.model.Habit;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -8,12 +10,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Getter
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"habitReport", "habit"})
 public class Recommendation {
 
     @Id
@@ -39,7 +43,8 @@ public class Recommendation {
     private LocalTime endTime;
 
     @Column
-    private String dayOfWeek;
+    @Convert(converter = LongListConvert.class)
+    private List<Long> dayOfWeek;
 
     public void setId(Long id) {
         this.id = id;
@@ -65,7 +70,7 @@ public class Recommendation {
         this.endTime = endTime;
     }
 
-    public void setDayOfWeek(String dayOfWeek) {
+    public void setDayOfWeek(List<Long> dayOfWeek) {
         this.dayOfWeek = dayOfWeek;
     }
 }
