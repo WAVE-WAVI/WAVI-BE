@@ -25,7 +25,7 @@ public class Habit extends BaseTimeEntity {
     private User user;
 
     @Column(nullable = false)
-    private Long icon;
+    private String icon;
 
     @Column(nullable = false)
     private String name;
@@ -44,7 +44,7 @@ public class Habit extends BaseTimeEntity {
     private LocalDateTime deletedAt;
 
     @Builder
-    public Habit(User user, Long icon, String name, StatusType status, LocalTime startTime, LocalTime endTime) {
+    public Habit(User user, String icon, String name, StatusType status, LocalTime startTime, LocalTime endTime) {
         this.user = user;
         this.icon = icon;
         this.name = name;
@@ -62,7 +62,7 @@ public class Habit extends BaseTimeEntity {
         this.user = user;
     }
 
-    public void setIcon(Long icon) {
+    public void setIcon(String icon) {
         this.icon = icon;
     }
 

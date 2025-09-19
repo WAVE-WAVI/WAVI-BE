@@ -12,7 +12,7 @@ import java.util.List;
 public class HabitResponseDto {
         private Long id;
         private String name;
-        private Long icon;
+        private String icon;
         private List<Integer> dayOfWeek;
         private StatusType status;
         private LocalTime startTime;
