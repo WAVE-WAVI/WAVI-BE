@@ -1,5 +1,6 @@
 package com.wave.wavi.report.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wave.wavi.habit.model.Habit;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"habitReport", "habit"})
 public class TopFailureReason {
 
     @Id

@@ -1,5 +1,6 @@
 package com.wave.wavi.report.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wave.wavi.common.BaseTimeEntity;
 import com.wave.wavi.user.model.User;
 import jakarta.persistence.*;
@@ -9,12 +10,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"user"})
 public class HabitReport extends BaseTimeEntity {
 
     @Id
@@ -39,6 +43,14 @@ public class HabitReport extends BaseTimeEntity {
     @Column(columnDefinition = "TEXT")
     private String summary;
 
+    @OneToMany(mappedBy = "habitReport", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
+    private List<TopFailureReason> topFailureReasons = new ArrayList<>();
+
+    @OneToMany(mappedBy = "habitReport", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
+    private List<Recommendation> recommendation = new ArrayList<>();
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -61,5 +73,13 @@ public class HabitReport extends BaseTimeEntity {
 
     public void setSummary(String summary) {
         this.summary = summary;
+    }
+
+    public void setTopFailureReasons(List<TopFailureReason> topFailureReasons) {
+        this.topFailureReasons = topFailureReasons;
+    }
+
+    public void setRecommendation(List<Recommendation> recommendation) {
+        this.recommendation = recommendation;
     }
 }
