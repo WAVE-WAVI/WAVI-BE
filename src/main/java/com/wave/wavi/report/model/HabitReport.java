@@ -1,5 +1,6 @@
 package com.wave.wavi.report.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wave.wavi.common.BaseTimeEntity;
 import com.wave.wavi.user.model.User;
@@ -35,9 +36,11 @@ public class HabitReport extends BaseTimeEntity {
     private ReportType type;
 
     @Column(nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalDate startDate;
 
     @Column(nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
     private LocalDate endDate;
 
     @Column(columnDefinition = "TEXT")
