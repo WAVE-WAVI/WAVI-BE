@@ -46,9 +46,9 @@ public class HabitLogController {
 
     // 실패 이유 조회(목록용)
     @GetMapping("/failure")
-    public ResponseDto<Object> getFailureReasons() {
+    public ResponseDto<List<FailureReason>> getFailureReasons() {
         List<FailureReason> failureReasons = habitLogService.getFailureReasons();
-        return ResponseDto.builder()
+        return ResponseDto.<List<FailureReason>>builder()
                 .status(HttpStatus.OK.value())
                 .message("실패 목록 조회 성공")
                 .data(failureReasons)
@@ -57,7 +57,7 @@ public class HabitLogController {
 
     // 조건별 모든 기록 조회
     @GetMapping("")
-    public ResponseDto<Object> getLogs(
+    public ResponseDto<List<HabitLogResponseDto>> getLogs(
             @RequestParam (name = "habitId", required = false) Long habitId,
             @RequestParam (name = "startDate", required = false) LocalDate startDate,
             @RequestParam (name = "endDate", required = false) LocalDate endDate,
@@ -66,7 +66,7 @@ public class HabitLogController {
     ) {
         String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).getSubject();
         List<HabitLogResponseDto> logs = habitLogService.getLogs(habitId, startDate, endDate, completed, email);
-        return ResponseDto.builder()
+        return ResponseDto.<List<HabitLogResponseDto>>builder()
                 .status(HttpStatus.OK.value())
                 .message("기록 조회 성공")
                 .data(logs)
