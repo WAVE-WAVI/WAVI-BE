@@ -43,8 +43,9 @@ spring:
 
   data:
     redis:
-      host: localhost
+      host: ${REDIS_IP}
       port: 6379
+      password: ${REDIS_PASSWORD}
 
 jwt:
   secret:
