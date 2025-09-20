@@ -3,19 +3,18 @@ package com.wave.wavi.user.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wave.wavi.common.ResponseDto;
 import com.wave.wavi.config.security.UserDetailsServiceImpl;
-import com.wave.wavi.user.dto.PasswordUpdateRequestDto;
-import com.wave.wavi.user.dto.ProfileUpdateRequestDto;
-import com.wave.wavi.user.dto.UserLoginRequestDto;
-import com.wave.wavi.user.dto.UserSignupRequestDto;
+import com.wave.wavi.user.dto.*;
 import com.wave.wavi.user.model.User;
 import com.wave.wavi.user.oauth.OAuthService;
 import com.wave.wavi.user.security.UserDetailsImpl;
 import com.wave.wavi.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
@@ -23,13 +22,23 @@ public class UserController {
     private final UserService userService;
     private final OAuthService oAuthService;
 
-    //회원가입
-    @PostMapping("/signup")
-    public ResponseDto<Object> signup(@RequestBody UserSignupRequestDto requestDto) {
-        userService.signup(requestDto);
-        return ResponseDto.builder()
-                .status(HttpStatus.CREATED.value())
-                .message("회원 가입이 완료되었습니다.")
+    //회원 가입 요청
+    @PostMapping("/signup-request")
+    public ResponseDto<String> requestSignup(@RequestBody UserSignupRequestDto requestDto) {
+        userService.requestSignup(requestDto);
+        return ResponseDto.<String>builder()
+                .status(HttpStatus.OK.value())
+                .message("인증 이메일이 발송되었습니다. 10분 내에 인증을 완료해주세요.")
+                .build();
+    }
+
+    //회원 가입
+    @PostMapping("/signup-confirm")
+    public ResponseDto<String> confirmSignup(@RequestBody EmailVerificationRequestDto requestDto) {
+        userService.confirmSign(requestDto);
+        return ResponseDto.<String>builder()
+                .status(HttpStatus.OK.value())
+                .message("회원 가입 완료")
                 .build();
     }
 

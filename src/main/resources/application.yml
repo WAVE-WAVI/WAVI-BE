@@ -29,6 +29,24 @@ spring:
               - email
               - profile
 
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: wavi.help@gmail.com
+    password: ${GOOGLE_APP_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  data:
+    redis:
+      host: ${REDIS_IP}
+      port: 6379
+      password: ${REDIS_PASSWORD}
+
 jwt:
   secret:
     key: ${JWT_SECRET_KEY}
