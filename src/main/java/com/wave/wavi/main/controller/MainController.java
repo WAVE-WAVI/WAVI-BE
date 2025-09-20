@@ -20,10 +20,10 @@ public class MainController {
     private final JwtUtil jwtUtil;
 
     @GetMapping("")
-    public ResponseDto<Object> main(HttpServletRequest request) {
+    public ResponseDto<MainResponseDto> main(HttpServletRequest request) {
         String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).getSubject();
         MainResponseDto mainResponseDto = mainService.main(email);
-        return ResponseDto.builder()
+        return ResponseDto.<MainResponseDto>builder()
                 .status(HttpStatus.OK.value())
                 .message("메인화면 정보 불러오기 성공")
                 .data(mainResponseDto)

@@ -15,7 +15,7 @@ import java.util.List;
 public class HabitRequestDto {
     private String name;
     private List<Integer> dayOfWeek;
-    private Long icon;
+    private String icon;
     private LocalTime startTime;
     private LocalTime endTime;
 }

@@ -50,3 +50,7 @@ spring:
 jwt:
   secret:
     key: ${JWT_SECRET_KEY}
+
+api:
+  fastapi:
+    base-url: ${FASTAPI_BASE_URL:http://localhost:8000}

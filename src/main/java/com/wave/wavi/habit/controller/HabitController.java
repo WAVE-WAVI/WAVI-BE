@@ -2,8 +2,10 @@ package com.wave.wavi.habit.controller;
 
 import com.wave.wavi.common.ResponseDto;
 import com.wave.wavi.config.jwt.JwtUtil;
+import com.wave.wavi.habit.dto.ChatAnalysisRequestDto;
 import com.wave.wavi.habit.dto.HabitRequestDto;
 import com.wave.wavi.habit.dto.HabitResponseDto;
+import com.wave.wavi.habit.service.ChatAnalysisService;
 import com.wave.wavi.habit.service.HabitService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +21,7 @@ public class HabitController {
 
     private final HabitService habitService;
     private final JwtUtil jwtUtil;
+    private final ChatAnalysisService chatAnalysisService;
 
     // 습관 등록
     @PostMapping("")
@@ -54,9 +57,9 @@ public class HabitController {
 
     // 단일 습관 조회
     @GetMapping("/{habitId}")
-    public ResponseDto<Object> getHabit(@PathVariable Long habitId) {
+    public ResponseDto<HabitResponseDto> getHabit(@PathVariable Long habitId) {
         HabitResponseDto habit = habitService.getHabit(habitId);
-        return ResponseDto.builder()
+        return ResponseDto.<HabitResponseDto>builder()
                 .status(HttpStatus.OK.value())
                 .message("습관 조회 성공")
                 .data(habit)
@@ -65,10 +68,10 @@ public class HabitController {
 
     // 내 모든 습관 조회
     @GetMapping("")
-    public ResponseDto<Object> getAllHabits(HttpServletRequest request) {
+    public ResponseDto<List<HabitResponseDto>> getAllHabits(HttpServletRequest request) {
         String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).getSubject();
         List<HabitResponseDto> habits = habitService.getAllHabits(email);
-        return ResponseDto.builder()
+        return ResponseDto.<List<HabitResponseDto>>builder()
                 .status(HttpStatus.OK.value())
                 .message("모든 습관 조회 성공")
                 .data(habits)
@@ -77,10 +80,10 @@ public class HabitController {
 
     // 오늘의 습관 조회
     @GetMapping("/today")
-    public ResponseDto<Object> getTodayHabits(HttpServletRequest request) {
+    public ResponseDto<List<HabitResponseDto>> getTodayHabits(HttpServletRequest request) {
         String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).getSubject();
         List<HabitResponseDto> habits = habitService.getTodayHabits(email);
-        return ResponseDto.builder()
+        return ResponseDto.<List<HabitResponseDto>>builder()
                 .status(HttpStatus.OK.value())
                 .message("오늘의 습관 조회 성공")
                 .data(habits)
@@ -94,6 +97,23 @@ public class HabitController {
         return ResponseDto.builder()
                 .status(HttpStatus.OK.value())
                 .message("습관 상태 갱신 성공")
+                .build();
+    }
+
+    @GetMapping("/chat")
+    public ResponseDto<Object> analyzePrompt(@RequestBody ChatAnalysisRequestDto requestDto) {
+        Object data = chatAnalysisService.analyzePrompt(requestDto);
+        if (data.getClass() == String.class) {
+            return ResponseDto.builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .message("메시지 분석 결과 정보 부족")
+                    .data(data)
+                    .build();
+        }
+        return ResponseDto.builder()
+                .status(HttpStatus.OK.value())
+                .message("메시지 분석 성공")
+                .data(data)
                 .build();
     }
 }

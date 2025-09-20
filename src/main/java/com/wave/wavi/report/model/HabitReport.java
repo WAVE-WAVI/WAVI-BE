@@ -1,21 +1,26 @@
 package com.wave.wavi.report.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wave.wavi.common.BaseTimeEntity;
 import com.wave.wavi.user.model.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.sql.Time;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonIgnoreProperties({"user"})
 public class HabitReport extends BaseTimeEntity {
 
     @Id
@@ -32,22 +37,23 @@ public class HabitReport extends BaseTimeEntity {
     private ReportType type;
 
     @Column(nullable = false)
+    @Schema(type = "string")
     private LocalDate startDate;
 
     @Column(nullable = false)
+    @Schema(type = "string")
     private LocalDate endDate;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String summary;
 
-    @Column
-    private Time totalTime;
+    @OneToMany(mappedBy = "habitReport", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
+    private List<TopFailureReason> topFailureReasons = new ArrayList<>();
 
-    @Column
-    private String topFailureReasons;
-
-    @Column
-    private String recommendations;
+    @OneToMany(mappedBy = "habitReport", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @Builder.Default
+    private List<Recommendation> recommendation = new ArrayList<>();
 
     public void setId(Long id) {
         this.id = id;
@@ -73,15 +79,11 @@ public class HabitReport extends BaseTimeEntity {
         this.summary = summary;
     }
 
-    public void setTotalTime(Time totalTime) {
-        this.totalTime = totalTime;
-    }
-
-    public void setTopFailureReasons(String topFailureReasons) {
+    public void setTopFailureReasons(List<TopFailureReason> topFailureReasons) {
         this.topFailureReasons = topFailureReasons;
     }
 
-    public void setRecommendations(String recommendations) {
-        this.recommendations = recommendations;
+    public void setRecommendation(List<Recommendation> recommendation) {
+        this.recommendation = recommendation;
     }
 }

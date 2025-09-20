@@ -44,9 +44,9 @@ public class UserController {
 
     //로그인
     @PostMapping("/login")
-    public ResponseDto<Object> login(@RequestBody UserLoginRequestDto requestDto) {
+    public ResponseDto<String> login(@RequestBody UserLoginRequestDto requestDto) {
         String token = userService.login(requestDto);
-        return ResponseDto.builder()
+        return ResponseDto.<String>builder()
                 .status(HttpStatus.OK.value())
                 .message("로그인 성공")
                 .data(token)

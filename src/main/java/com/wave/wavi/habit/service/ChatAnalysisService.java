@@ -1,8 +1,8 @@
-package com.wave.wavi.gemini.service;
+package com.wave.wavi.habit.service;
 
 import com.google.genai.Client;
 import com.google.genai.types.GenerateContentResponse;
-import com.wave.wavi.gemini.dto.ChatAnalysisRequestDto;
+import com.wave.wavi.habit.dto.ChatAnalysisRequestDto;
 import com.wave.wavi.habit.dto.HabitRequestDto;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONObject;
@@ -15,7 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class GeminiService {
+public class ChatAnalysisService {
 
     private final Client client;
 
@@ -33,7 +33,7 @@ public class GeminiService {
 
 **출력 형식 (JSON):**
 {
-    "icon": "습관에 맞는 번호",
+    "icon": "습관에 맞는 아이콘 (예: 💻, 🏃, 📚, 🎵, 🍎, 💪, 🧘, ☕, 🚶, 🎨)",
     "name": "습관 이름 (어떤 습관을 몇분/몇회 하겠다)",
     "startTime": 수행 가능 시작 시간 (HH:MM:SS 형식),
     "endTime": 수행 가능 종료 시간 (HH:MM:SS 형식),
@@ -42,14 +42,14 @@ public class GeminiService {
 
 **분석 가이드라인:**
 1. **icon**: 습관의 성격에 맞는 번호 선택
-   - 코딩/프로그래밍: 1
-   - 운동/헬스: 2
-   - 독서/학습: 3
-   - 음악: 4
-   - 건강/식단: 5
-   - 명상/요가: 6
-   - 커피/음료: 7
-   - 예술/창작: 8
+   - 코딩/프로그래밍: 💻
+   - 운동/헬스: 💪, 🏃, 🚶
+   - 독서/학습: 📚
+   - 음악: 🎵
+   - 건강/식단: 🍎
+   - 명상/요가: 🧘
+   - 커피/음료: ☕
+   - 예술/창작: 🎨
 
 2. **name**: 구체적이고 명확한 습관명
    - "운동 30분" (시간 기반)
@@ -69,13 +69,13 @@ public class GeminiService {
 
 **예시:**
 - "매일 아침 9시에 코딩 1시간씩 하고 싶어"
-  → {"icon": 1, "name": "코딩 1시간", "startTime": "09:00:00", "endTime": "10:00:00", "dayOfWeek": [1, 2, 3, 4, 5, 6, 7]}
+  → {"icon": "💻", "name": "코딩 1시간", "startTime": "09:00:00", "endTime": "10:00:00", "dayOfWeek": [1, 2, 3, 4, 5, 6, 7]}
 
 - "오전 9시~11시 사이에 코딩 1시간"
-  → {"icon": 1, "name": "코딩 1시간", "startTime": "09:00:00", "endTime": "11:00:00", "dayOfWeek": [1, 2, 3, 4, 5, 6, 7]}
+  → {"icon": "💻", "name": "코딩 1시간", "startTime": "09:00:00", "endTime": "11:00:00", "dayOfWeek": [1, 2, 3, 4, 5, 6, 7]}
 
 - "월수금 저녁 7시~9시 사이에 운동 30분"
-  → {"icon": 2, "name": "운동 30분", "startTime": "19:00:00", "endTime": "21:00:00", "dayOfWeek": [1, 3, 5]}
+  → {"icon": "💪", "name": "운동 30분", "startTime": "19:00:00", "endTime": "21:00:00", "dayOfWeek": [1, 3, 5]}
 
 **중요사항:**
 - 반드시 유효한 JSON 형식으로 출력
@@ -92,7 +92,7 @@ public class GeminiService {
 
 **부족 정보 처리 예시:**
 - "코딩 1시간씩 하고 싶어"
-  → {"icon": 1, "name": "코딩 1시간", "startTime": null, "endTime": null, "dayOfWeek": null, "needMoreInfo": true, "ask": "수행 가능한 시간 범위(시작~종료 시간)와 요일을 알려주세요."}
+  → {"icon": "💻", "name": "코딩 1시간", "startTime": null, "endTime": null, "dayOfWeek": null, "needMoreInfo": true, "ask": "수행 가능한 시간 범위(시작~종료 시간)와 요일을 알려주세요."}
 """, String.join("\n", requestDto.getHistory()), requestDto.getCurrentPrompt());
 
         GenerateContentResponse response =
@@ -102,7 +102,7 @@ public class GeminiService {
                         null);
 
         String responseData = response.text();
-        System.out.println(responseData);
+
         JSONParser parser = new JSONParser();
         JSONObject jsonObject = null;
         try {
@@ -117,7 +117,7 @@ public class GeminiService {
         }
 
         return HabitRequestDto.builder()
-                .icon(Long.valueOf(jsonObject.get("icon").toString()))
+                .icon(jsonObject.get("icon").toString())
                 .name(jsonObject.get("name").toString())
                 .startTime(LocalTime.parse(jsonObject.get("startTime").toString()))
                 .endTime(LocalTime.parse(jsonObject.get("endTime").toString()))
