@@ -8,6 +8,8 @@ import com.wave.wavi.user.model.User;
 import com.wave.wavi.user.oauth.OAuthService;
 import com.wave.wavi.user.security.UserDetailsImpl;
 import com.wave.wavi.user.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -18,11 +20,13 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/user")
 @RequiredArgsConstructor
+@Tag(name = "유저 API", description = "회원가입, 로그인, 프로필 관리 등 사용자 관련 API")
 public class UserController {
     private final UserService userService;
     private final OAuthService oAuthService;
 
     //회원 가입 요청
+    @Operation(summary = "회원가입 요청", description = "이메일 인증을 위해 인증 코드를 발송하는 API")
     @PostMapping("/signup-request")
     public ResponseDto<String> requestSignup(@RequestBody UserSignupRequestDto requestDto) {
         userService.requestSignup(requestDto);
@@ -33,6 +37,7 @@ public class UserController {
     }
 
     //회원 가입
+    @Operation(summary = "회원가입", description = "이메일 인증 코드를 확인하고 회원가입을 진행하는 API")
     @PostMapping("/signup-confirm")
     public ResponseDto<String> confirmSignup(@RequestBody EmailVerificationRequestDto requestDto) {
         userService.confirmSign(requestDto);
@@ -43,6 +48,7 @@ public class UserController {
     }
 
     //로그인
+    @Operation(summary = "일반 로그인", description = "이메일, 비밀번호로 로그인하고 jwt 토큰을 발급받는 API")
     @PostMapping("/login")
     public ResponseDto<String> login(@RequestBody UserLoginRequestDto requestDto) {
         String token = userService.login(requestDto);
@@ -54,6 +60,7 @@ public class UserController {
     }
 
     //구글 로그인
+    @Operation(summary = "구글 로그인", description = "구글로부터 인증을 받아 로그인 후 jwt를 발급하는 API")
     @GetMapping("/login/oauth2/code/google")
     public ResponseDto<String> googleLogin(@RequestParam(name = "code") String code) throws JsonProcessingException {
         String token = oAuthService.googleLogin(code);
@@ -65,6 +72,7 @@ public class UserController {
     }
 
     //개인 정보 수정
+    @Operation(summary = "프로필 수정", description = "로그인 된 사용자의 프로필 정보를 수정하는 API")
     @PatchMapping("/profile")
     public ResponseDto<String> updateProfile(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
@@ -78,6 +86,7 @@ public class UserController {
     }
 
     //비밀번호 수정
+    @Operation(summary = "비밀번호 수정", description = "로그인 된 사용자의 비밀번호를 새 비밀번호로 변경하는 API")
     @PostMapping("/password")
     public ResponseDto<String> updatePassword(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
