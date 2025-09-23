@@ -1,8 +1,10 @@
 package com.wave.wavi.report.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wave.wavi.common.BaseTimeEntity;
 import com.wave.wavi.user.model.User;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -35,9 +37,11 @@ public class HabitReport extends BaseTimeEntity {
     private ReportType type;
 
     @Column(nullable = false)
+    @Schema(type = "string")
     private LocalDate startDate;
 
     @Column(nullable = false)
+    @Schema(type = "string")
     private LocalDate endDate;
 
     @Column(columnDefinition = "TEXT")

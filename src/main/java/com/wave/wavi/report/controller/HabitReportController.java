@@ -38,7 +38,7 @@ public class HabitReportController {
 
     @GetMapping("")
     @Operation(summary = "조건별 모든 리포트 조회", description = "타입, 날짜 범위로 리포트를 조회하는 API")
-    public ResponseDto<Object> getReports(
+    public ResponseDto<List<HabitReport>> getReports(
             @RequestParam (name = "type", required = false) ReportType type,
             @RequestParam (name = "startDate", required = false) LocalDate startDate,
             @RequestParam (name = "endDate", required = false) LocalDate endDate,
@@ -46,7 +46,7 @@ public class HabitReportController {
     ) {
         String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).getSubject();
         List<HabitReport> reports = habitReportService.getReport(type, startDate, endDate, email);
-        return ResponseDto.builder()
+        return ResponseDto.<List<HabitReport>>builder()
                 .status(HttpStatus.OK.value())
                 .message("리포트 조회 성공")
                 .data(reports)

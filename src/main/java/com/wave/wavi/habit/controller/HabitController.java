@@ -64,9 +64,9 @@ public class HabitController {
     // 단일 습관 조회
     @GetMapping("/{habitId}")
     @Operation(summary = "단일 습관 조회", description = "한 개의 습관을 조회하는 API")
-    public ResponseDto<Object> getHabit(@PathVariable Long habitId) {
+    public ResponseDto<HabitResponseDto> getHabit(@PathVariable Long habitId) {
         HabitResponseDto habit = habitService.getHabit(habitId);
-        return ResponseDto.builder()
+        return ResponseDto.<HabitResponseDto>builder()
                 .status(HttpStatus.OK.value())
                 .message("습관 조회 성공")
                 .data(habit)
@@ -76,10 +76,10 @@ public class HabitController {
     // 내 모든 습관 조회
     @GetMapping("")
     @Operation(summary = "모든 습관 조회", description = "사용자의 모든 습관을 조회하는 API")
-    public ResponseDto<Object> getAllHabits(HttpServletRequest request) {
+    public ResponseDto<List<HabitResponseDto>> getAllHabits(HttpServletRequest request) {
         String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).getSubject();
         List<HabitResponseDto> habits = habitService.getAllHabits(email);
-        return ResponseDto.builder()
+        return ResponseDto.<List<HabitResponseDto>>builder()
                 .status(HttpStatus.OK.value())
                 .message("모든 습관 조회 성공")
                 .data(habits)
@@ -89,10 +89,10 @@ public class HabitController {
     // 오늘의 습관 조회
     @GetMapping("/today")
     @Operation(summary = "오늘의 습관 조회", description = "사용자의 모든 습관을 조회하는 API")
-    public ResponseDto<Object> getTodayHabits(HttpServletRequest request) {
+    public ResponseDto<List<HabitResponseDto>> getTodayHabits(HttpServletRequest request) {
         String email = jwtUtil.getUserInfoFromToken(jwtUtil.getTokenFromHeader(request)).getSubject();
         List<HabitResponseDto> habits = habitService.getTodayHabits(email);
-        return ResponseDto.builder()
+        return ResponseDto.<List<HabitResponseDto>>builder()
                 .status(HttpStatus.OK.value())
                 .message("오늘의 습관 조회 성공")
                 .data(habits)
