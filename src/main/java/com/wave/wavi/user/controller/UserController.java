@@ -87,7 +87,7 @@ public class UserController {
 
     //비밀번호 수정
     @Operation(summary = "비밀번호 수정", description = "로그인 된 사용자의 비밀번호를 새 비밀번호로 변경하는 API")
-    @PostMapping("/password")
+    @PatchMapping("/password")
     public ResponseDto<String> updatePassword(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody PasswordUpdateRequestDto requestDto) {
