@@ -3,6 +3,7 @@ package com.wave.wavi.report.model;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wave.wavi.common.util.LongListConvert;
 import com.wave.wavi.habit.model.Habit;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,9 +38,11 @@ public class Recommendation {
     private String name;
 
     @Column
+    @Schema(type = "string")
     private LocalTime startTime;
 
     @Column
+    @Schema(type = "string")
     private LocalTime endTime;
 
     @Column
