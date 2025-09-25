@@ -63,7 +63,9 @@ public class UserService {
 
         String redisKey = "signup" + requestDto.getEmail();
         redisTemplate.opsForValue().set(redisKey, signupData, 10, TimeUnit.MINUTES);
-        emailService.sendVertificationEmail(requestDto.getEmail(), verificationCode);
+        emailService.sendEmail(requestDto.getEmail(),
+                "[WAVI] 회원가입을 위한 이메일 인증 코드입니다.",
+                "WAVI 서비스에 가입해 주셔서 감사합니다.\n인증 코드: [" + verificationCode + "]");
     }
 
     //회원 가입
@@ -129,19 +131,45 @@ public class UserService {
         }
     }
 
-    //비밀번호 수정
-    @Transactional
-    public void updatePassword(String email, PasswordUpdateRequestDto requestDto) {
+    public void requestUpdatePassword(String email, PasswordUpdateRequestDto requestDto) {
         User user = userRepository
                 .findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-        if (!passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(requestDto.getCurrentPassword(),  user.getPassword())) {
             throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
         }
-        if (passwordEncoder.matches(requestDto.getNewPassword(), user.getPassword())) {
+        if (passwordEncoder.matches(requestDto.getNewPassword(),  user.getPassword())) {
             throw new IllegalArgumentException("새 비밀번호는 현재 비밀번호와 같을 수 없습니다.");
         }
 
+        String verificationCode = String.valueOf((int) (Math.random() * 900000) + 100000);
         String newHashedPassword = passwordEncoder.encode(requestDto.getNewPassword());
-        user.setPassword(newHashedPassword);
+
+        Map<String, String> passwordChangeData = new HashMap<>();
+        passwordChangeData.put("newPassword", newHashedPassword);
+        passwordChangeData.put("verificationCode", verificationCode);
+
+        String redisKey = "pwchange" + email;
+        redisTemplate.opsForValue().set(redisKey, passwordChangeData, 10, TimeUnit.MINUTES);
+        emailService.sendEmail(email,
+                "[WAVI] 비밀번호 변경을 위한 이메일 인증 코드입니다.",
+                "WAVI 서비스를 이용해 주셔서 감사합니다.\n인증 코드: [" + verificationCode + "]");
+    }
+
+    @Transactional
+    public void confirmUpdatePassword(String email, PasswordVerificationRequestDto requestDto) {
+        String redisKey = "pwchange" + email;
+        Map<String, String> passwordChangeData = (Map<String, String>) redisTemplate.opsForValue().get(redisKey);
+
+        if (passwordChangeData == null) {
+            throw new IllegalArgumentException("인증 시간이 만료되었거나 잘못된 요청입니다.");
+        }
+        if (!passwordChangeData.get("verificationCode").equals(requestDto.getCode())) {
+            throw new IllegalArgumentException("인증 코드가 일치하지 않습니다.");
+        }
+        User user = userRepository
+                .findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
+        user.setPassword(passwordChangeData.get("newPassword"));
+        redisTemplate.delete(redisKey);
     }
 }
+

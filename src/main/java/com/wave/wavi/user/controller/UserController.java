@@ -27,7 +27,7 @@ public class UserController {
 
     //회원 가입 요청
     @Operation(summary = "회원가입 요청", description = "이메일 인증을 위해 인증 코드를 발송하는 API")
-    @PostMapping("/signup-request")
+    @PostMapping("/signup/request")
     public ResponseDto<String> requestSignup(@RequestBody UserSignupRequestDto requestDto) {
         userService.requestSignup(requestDto);
         return ResponseDto.<String>builder()
@@ -38,7 +38,7 @@ public class UserController {
 
     //회원 가입
     @Operation(summary = "회원가입", description = "이메일 인증 코드를 확인하고 회원가입을 진행하는 API")
-    @PostMapping("/signup-confirm")
+    @PostMapping("/signup/confirm")
     public ResponseDto<String> confirmSignup(@RequestBody EmailVerificationRequestDto requestDto) {
         userService.confirmSign(requestDto);
         return ResponseDto.<String>builder()
@@ -85,19 +85,35 @@ public class UserController {
                 .build();
     }
 
-    //비밀번호 수정
-    @Operation(summary = "비밀번호 수정", description = "로그인 된 사용자의 비밀번호를 새 비밀번호로 변경하는 API")
-    @PatchMapping("/password")
-    public ResponseDto<String> updatePassword(
+    //비밀번호 수정 요청
+    @Operation(summary = "비밀번호 변경 요청", description = "비밀번호 변경을 위해 인증 코드를 발송하는 API")
+    @PostMapping("/password/request")
+    public ResponseDto<String> requestUpdatePassword(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody PasswordUpdateRequestDto requestDto) {
 
         String userEmail = userDetails.getUser().getEmail();
-        userService.updatePassword(userEmail, requestDto);
+        userService.requestUpdatePassword(userEmail, requestDto);
 
         return ResponseDto.<String>builder()
                 .status(HttpStatus.OK.value())
-                .message("비밀번호 수정 성공")
+                .message("인증 이메일이 발송되었습니다. 10분 내에 인증을 완료해주세요.")
+                .build();
+    }
+
+    //비밀번호 수정
+    @Operation(summary = "비밀번호 변경", description = "이메일 인증 코드를 확인하고 비밀번호 변경을 완료하는 API")
+    @PatchMapping("/password/confirm")
+    public ResponseDto<String> confirmPassword(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @RequestBody PasswordVerificationRequestDto requestDto) {
+
+        String userEmail = userDetails.getUser().getEmail();
+        userService.confirmUpdatePassword(userEmail, requestDto);
+
+        return ResponseDto.<String>builder()
+                .status(HttpStatus.OK.value())
+                .message("비밀번호가 성공적으로 변경되었습니다.")
                 .build();
     }
 }
