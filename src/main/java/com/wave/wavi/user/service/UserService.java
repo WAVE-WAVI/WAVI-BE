@@ -135,7 +135,7 @@ public class UserService {
         User user = userRepository
                 .findByEmail(email).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
         if (!passwordEncoder.matches(requestDto.getCurrentPassword(),  user.getPassword())) {
-            throw new IllegalArgumentException("현재 비밃번호가 일치하지 않습니다.");
+            throw new IllegalArgumentException("현재 비밀번호가 일치하지 않습니다.");
         }
         if (passwordEncoder.matches(requestDto.getNewPassword(),  user.getPassword())) {
             throw new IllegalArgumentException("새 비밀번호는 현재 비밀번호와 같을 수 없습니다.");
