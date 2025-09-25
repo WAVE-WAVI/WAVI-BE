@@ -30,8 +30,7 @@ public class WebSecurityConfig {
 
         http.authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/api/v1/user/signup-request",
-                                "/api/v1/user/signup-confirm",
+                                "/api/v1/user/**",
                                 "/api/v1/user/login",
                                 "/api/v1/user/login/oauth2/code/google",
                                 "/swagger-ui/**",
