@@ -19,7 +19,7 @@ public class CalendarService {
     public SuccessRateResponseDto getSuccessRate(LocalDate startDate, LocalDate endDate, String email) {
         int totalCount = habitLogService.getLogs(null, startDate, endDate, null, email).size();
         int successCount = habitLogService.getLogs(null, startDate, endDate, true, email).size();
-        int successRate = (totalCount == 0) ? 0 : successCount * 100 / totalCount;
+        int successRate = (totalCount == 0) ? 0 : Math.round((float) successCount * 100 / totalCount);
         return new SuccessRateResponseDto(successRate, totalCount, successCount);
     }
 }
