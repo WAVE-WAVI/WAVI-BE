@@ -24,7 +24,7 @@ spring:
           google:
             client-id: ${CLIENT_ID}
             client-secret: ${CLIENT_SECRET}
-            redirect-uri: http://localhost:8080/api/v1/user/login/oauth2/code/google
+            redirect-uri: http://wavi.kro.kr:8080/api/v1/user/login/oauth2/code/google
             scope:
               - email
               - profile
