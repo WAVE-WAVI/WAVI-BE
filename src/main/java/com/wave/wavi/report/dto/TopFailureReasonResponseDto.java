@@ -18,5 +18,12 @@ public class TopFailureReasonResponseDto {
 
     private String habit;
 
-    private List<String> reasons;
+    private List<Reason> reasons;
+
+    @Builder
+    @Getter
+    public static class Reason {
+        private String reason;
+        private String icon;
+    }
 }

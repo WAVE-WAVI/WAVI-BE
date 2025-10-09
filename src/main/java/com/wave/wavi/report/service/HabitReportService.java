@@ -185,7 +185,8 @@ public class HabitReportService {
                             )
                             .habitReport(savedHabitReport)
                             .priority((long) i)
-                            .reason(topFailureReasonResponseDto.getReasons().get(i - 1))
+                            .reason(topFailureReasonResponseDto.getReasons().get(i - 1).getReason())
+                            .icon(topFailureReasonResponseDto.getReasons().get(i - 1).getIcon())
                             .build();
                     topFailureReasonRepository.save(topFailureReason);
                 }
