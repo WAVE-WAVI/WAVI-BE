@@ -48,6 +48,15 @@ spring:
       password: ${REDIS_PASSWORD}
       username: ${REDIS_USERNAME}
 
+  jackson:
+    time-zone: Asia/Seoul
+
+server:
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+
 jwt:
   secret:
     key: ${JWT_SECRET_KEY}
