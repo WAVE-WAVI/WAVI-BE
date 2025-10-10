@@ -110,7 +110,7 @@ public class HabitController {
                 .build();
     }
 
-    @GetMapping("/chat")
+    @PostMapping("/chat")
     @Operation(summary = "AI 채팅 분석", description = "습관 등록 시 채팅 내용을 분석하는 API")
     public ResponseDto<Object> analyzePrompt(@RequestBody ChatAnalysisRequestDto requestDto) {
         Object data = chatAnalysisService.analyzePrompt(requestDto);
