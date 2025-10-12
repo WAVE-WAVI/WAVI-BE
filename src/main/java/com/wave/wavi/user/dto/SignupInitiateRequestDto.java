@@ -3,7 +3,6 @@ package com.wave.wavi.user.dto;
 import lombok.Getter;
 
 @Getter
-public class EmailVerificationRequestDto {
+public class SignupInitiateRequestDto {
     private String email;
-    private String code;
 }
