@@ -2,9 +2,7 @@ package com.wave.wavi.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wave.wavi.common.ResponseDto;
-import com.wave.wavi.config.security.UserDetailsServiceImpl;
 import com.wave.wavi.user.dto.*;
-import com.wave.wavi.user.model.User;
 import com.wave.wavi.user.oauth.OAuthService;
 import com.wave.wavi.user.security.UserDetailsImpl;
 import com.wave.wavi.user.service.UserService;
@@ -26,10 +24,10 @@ public class UserController {
     private final OAuthService oAuthService;
 
     //회원 가입 요청
-    @Operation(summary = "회원가입 요청", description = "이메일 인증을 위해 인증 코드를 발송하는 API")
-    @PostMapping("/signup/request")
-    public ResponseDto<String> requestSignup(@RequestBody UserSignupRequestDto requestDto) {
-        userService.requestSignup(requestDto);
+    @Operation(summary = "회원가입 시작(이메일 인증 요청)", description = "이메일 인증을 위해 인증 코드를 발송하는 API")
+    @PostMapping("/signup/initiate")
+    public ResponseDto<String> initiateSignup(@RequestBody SignupInitiateRequestDto requestDto) {
+        userService.initiateSignup(requestDto);
         return ResponseDto.<String>builder()
                 .status(HttpStatus.OK.value())
                 .message("인증 이메일이 발송되었습니다. 10분 내에 인증을 완료해주세요.")
@@ -37,10 +35,10 @@ public class UserController {
     }
 
     //회원 가입
-    @Operation(summary = "회원가입", description = "이메일 인증 코드를 확인하고 회원가입을 진행하는 API")
-    @PostMapping("/signup/confirm")
-    public ResponseDto<String> confirmSignup(@RequestBody EmailVerificationRequestDto requestDto) {
-        userService.confirmSign(requestDto);
+    @Operation(summary = "회원가입 완료", description = "이메일 인증 코드를 확인하고 회원 정보를 등록해 회원가입을 완료하는 API")
+    @PostMapping("/signup/complete")
+    public ResponseDto<String> completeSignup(@RequestBody UserSignupRequestDto requestDto) {
+        userService.completeSignup(requestDto);
         return ResponseDto.<String>builder()
                 .status(HttpStatus.OK.value())
                 .message("회원 가입 완료")
@@ -104,7 +102,7 @@ public class UserController {
     //비밀번호 수정
     @Operation(summary = "비밀번호 변경", description = "이메일 인증 코드를 확인하고 비밀번호 변경을 완료하는 API")
     @PatchMapping("/password/confirm")
-    public ResponseDto<String> confirmPassword(
+    public ResponseDto<String> confirmUpdatePassword(
             @AuthenticationPrincipal UserDetailsImpl userDetails,
             @RequestBody PasswordVerificationRequestDto requestDto) {
 
