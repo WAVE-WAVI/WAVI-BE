@@ -47,6 +47,9 @@ public class HabitReport extends BaseTimeEntity {
     @OneToOne(mappedBy = "habitReport", fetch = FetchType.EAGER)
     private Summary summary;
 
+    @OneToOne(mappedBy = "habitReport", fetch = FetchType.EAGER)
+    private ConsistencyIndex consistencyIndex;
+
     @OneToMany(mappedBy = "habitReport", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default
     private List<TopFailureReason> topFailureReasons = new ArrayList<>();
@@ -77,6 +80,10 @@ public class HabitReport extends BaseTimeEntity {
 
     public void setSummary(Summary summary) {
         this.summary = summary;
+    }
+
+    public void setConsistencyIndex(ConsistencyIndex consistencyIndex) {
+        this.consistencyIndex = consistencyIndex;
     }
 
     public void setTopFailureReasons(List<TopFailureReason> topFailureReasons) {
