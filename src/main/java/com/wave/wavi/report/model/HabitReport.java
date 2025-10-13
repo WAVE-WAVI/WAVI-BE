@@ -44,8 +44,8 @@ public class HabitReport extends BaseTimeEntity {
     @Schema(type = "string")
     private LocalDate endDate;
 
-    @Column(columnDefinition = "TEXT")
-    private String summary;
+    @OneToOne(mappedBy = "habitReport", fetch = FetchType.EAGER)
+    private Summary summary;
 
     @OneToMany(mappedBy = "habitReport", fetch = FetchType.EAGER, cascade = CascadeType.REMOVE, orphanRemoval = true)
     @Builder.Default
@@ -75,7 +75,7 @@ public class HabitReport extends BaseTimeEntity {
         this.endDate = endDate;
     }
 
-    public void setSummary(String summary) {
+    public void setSummary(Summary summary) {
         this.summary = summary;
     }
 

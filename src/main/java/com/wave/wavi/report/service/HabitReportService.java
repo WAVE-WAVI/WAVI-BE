@@ -14,12 +14,10 @@ import com.wave.wavi.report.dto.RecommendationResponseDto;
 import com.wave.wavi.report.dto.ReportGenerateRequestDto;
 import com.wave.wavi.report.dto.ReportRequestDto;
 import com.wave.wavi.report.dto.TopFailureReasonResponseDto;
-import com.wave.wavi.report.model.HabitReport;
-import com.wave.wavi.report.model.Recommendation;
-import com.wave.wavi.report.model.ReportType;
-import com.wave.wavi.report.model.TopFailureReason;
+import com.wave.wavi.report.model.*;
 import com.wave.wavi.report.repository.HabitReportRepository;
 import com.wave.wavi.report.repository.RecommendationRepository;
+import com.wave.wavi.report.repository.SummaryRepository;
 import com.wave.wavi.report.repository.TopFailureReasonRepository;
 import com.wave.wavi.user.model.User;
 import com.wave.wavi.user.repository.UserRepository;
@@ -52,6 +50,7 @@ public class HabitReportService {
     private final HabitReportRepository habitReportRepository;
     private final TopFailureReasonRepository topFailureReasonRepository;
     private final RecommendationRepository recommendationRepository;
+    private final SummaryRepository summaryRepository;
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
 
@@ -170,11 +169,15 @@ public class HabitReportService {
                 .type(Objects.equals(jsonObject.get("type").toString(), "monthly") ? ReportType.MONTHLY : ReportType.WEEKLY)
                 .startDate(LocalDate.parse(jsonObject.get("start_date").toString()))
                 .endDate(LocalDate.parse(jsonObject.get("end_date").toString()))
-                .summary(jsonObject.get("summary").toString())
                 .build();
         HabitReport savedHabitReport = habitReportRepository.save(habitReport);
 
         try {
+            // 요약 저장
+            Summary summary = objectMapper.readValue(jsonObject.get("summary").toString(), new TypeReference<>() {});
+            summary.setHabitReport(savedHabitReport);
+            summaryRepository.save(summary);
+
             // 탑 실패 이유들 저장
             List<TopFailureReasonResponseDto> topFailureReasonResponseDtos = objectMapper.readValue(jsonObject.get("top_failure_reasons").toString(), new TypeReference<>() {});
             for (TopFailureReasonResponseDto topFailureReasonResponseDto : topFailureReasonResponseDtos) {
@@ -185,8 +188,8 @@ public class HabitReportService {
                             )
                             .habitReport(savedHabitReport)
                             .priority((long) i)
-                            .reason(topFailureReasonResponseDto.getReasons().get(i - 1).getReason())
-                            .icon(topFailureReasonResponseDto.getReasons().get(i - 1).getIcon())
+                            .reason(topFailureReasonResponseDto.getReasons().get(i - 1).getReason().toString())
+                            .icon(topFailureReasonResponseDto.getReasons().get(i - 1).getIcon().toString())
                             .build();
                     topFailureReasonRepository.save(topFailureReason);
                 }
