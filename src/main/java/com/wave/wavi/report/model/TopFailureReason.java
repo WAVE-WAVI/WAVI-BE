@@ -33,6 +33,9 @@ public class TopFailureReason {
     private String reason;
 
     @Column(nullable = false)
+    private String icon;
+
+    @Column(nullable = false)
     private Long priority;
 
     public void setId(Long id) {

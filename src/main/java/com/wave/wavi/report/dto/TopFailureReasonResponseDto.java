@@ -16,7 +16,16 @@ public class TopFailureReasonResponseDto {
     @JsonProperty("habit_id")
     private Long habitId;
 
-    private String habit;
+    private String name;
 
-    private List<String> reasons;
+    private List<Reason> reasons;
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Reason {
+        private String reason;
+        private String icon;
+    }
 }
