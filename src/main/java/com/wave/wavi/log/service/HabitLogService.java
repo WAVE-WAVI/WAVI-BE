@@ -62,6 +62,7 @@ public class HabitLogService {
         if (!user.getId().equals(habit.getUser().getId())) {
             throw new IllegalArgumentException("해당 유저의 습관이 아닙니다.");
         }
+        habit.setStatus(StatusType.FAILED);
         HabitLog habitLog = HabitLog.builder()
                 .habit(habit)
                 .user(habit.getUser())
