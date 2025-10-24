@@ -10,8 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UserSignupRequestDto {
     private String email;
+    private String code;
+
     private String password;
-    private LoginType loginType;
     private String nickname;
     private Long birthYear;
     private GenderType gender;
