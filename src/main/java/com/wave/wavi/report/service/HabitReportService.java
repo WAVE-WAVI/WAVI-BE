@@ -165,8 +165,8 @@ public class HabitReportService {
         HabitReport habitReport = HabitReport.builder()
                 .user(user)
                 .type(Objects.equals(jsonObject.get("type").toString(), "monthly") ? ReportType.MONTHLY : ReportType.WEEKLY)
-                .startDate(LocalDate.parse(jsonObject.get("start_date").toString()))
-                .endDate(LocalDate.parse(jsonObject.get("end_date").toString()))
+                .startDate(requestDto.getStartDate())
+                .endDate(requestDto.getEndDate())
                 .build();
         HabitReport savedHabitReport = habitReportRepository.save(habitReport);
         log.info("리포트 저장 완료");
